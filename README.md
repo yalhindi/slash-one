@@ -1,25 +1,25 @@
 # Projet ONE - MegaHub (Slash)
 
-Bienvenue sur le depot du projet ONE, l'ecosysteme centralise permettant de recolter et lier les progressions de joueurs sur differents serveurs de jeux (Minecraft, etc.).
+Bienvenue sur le dépôt du projet ONE, l'écosystème centralisé permettant de récolter et lier les progressions des joueurs sur différents serveurs de jeux (Minecraft, etc.).
 
 ## Stack Technique
 - Framework : Next.js 15+ (App Router, React Compiler active)
 - Langage : TypeScript
 - Style : Tailwind CSS v4
 - ORM : Prisma v7.4+ (avec adaptateur natif pg)
-- Base de donnees : PostgreSQL (via Docker)
-- Architecture : N-Tiers orientee Feature (Vertical Slicing)
+- Base de données : PostgreSQL (via Docker)
+- Architecture : N-Tiers orientée Feature (Vertical Slicing)
 
 ---
 
 ## Installation locale (Onboarding)
 
-### 1. Prerequis
-- Node.js (v20+ recommande)
-- Docker Desktop (doit etre lance en arriere-plan)
-- IDE recommande : WebStorm ou VS Code
+### 1. Prérequis
+- Node.js (v20+ recommandé)
+- Docker Desktop (doit être lancé en arrière-plan)
+- IDE recommandé : WebStorm ou VS Code
 
-### 2. Cloner et installer les dependances
+### 2. Cloner et installer les dépendances
 
 ```bash
 git clone https://github.com/yalhindi/slash-one.git
@@ -28,7 +28,7 @@ npm install
 ```
 
 ### 3. Variables d'environnement
-Creez un fichier `.env` a la racine du projet. Ce fichier est ignoré par Git pour des raisons de securite.
+Créez un fichier `.env` a la racine du projet. Ce fichier est ignoré par Git pour des raisons de securité.
 Utilisez la structure suivante :
 
 ```env
@@ -41,24 +41,24 @@ POSTGRES_DB="local_db"
 DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}?schema=public"
 ```
 
-### 4. Lancer la Base de Donnees (Docker)
+### 4. Lancer la Base de Données (Docker)
 Assurez-vous que Docker Desktop tourne, puis montez le conteneur PostgreSQL :
 
 ```bash
 docker compose up -d
 ```
-Le conteneur expose la base sur le port 5432 de la machine hote.
+Le conteneur expose la base sur le port 5432 de la machine hôte.
 
 ### 5. Initialiser Prisma (ORM)
-Comme nous utilisons Prisma 7, la configuration de connexion est geree dynamiquement dans `src/lib/prisma.ts`.
-Generez le client TypeScript et appliquez les migrations à la base fraichement creee :
+Comme nous utilisons Prisma 7, la configuration de connexion est gérée dynamiquement dans `src/lib/prisma.ts`.
+Générez le client TypeScript et appliquez les migrations à la base fraichement créée :
 
 ```bash
 npx prisma generate
 npx prisma migrate dev
 ```
 
-### 6. Lancer le serveur de developpement
+### 6. Lancer le serveur de développement
 
 ```bash
 npm run dev
@@ -68,8 +68,8 @@ L'application est maintenant accessible sur http://localhost:3000.
 ---
 
 ## Architecture du projet
-Le code metier est separe des routes Next.js pour respecter une architecture N-Tiers (Controllers → Services → Repositories) :
+Le code métier est séparé des routes Next.js pour respecter une architecture N-Tiers (Controllers → Services → Repositories) :
 - `src/app/` : Routage Next.js (Front-end UI et API Controllers).
-- `src/features/` : Modules metiers (ex: `users/`, `progressions/`) contenant la logique (`.service.ts`) et l'accès BDD (`.repository.ts`).
-- `src/core/` : Logique transverse (Securite, Middlewares).
+- `src/features/` : Modules métiers (ex: `users/`, `progressions/`) contenant la logique (`.service.ts`) et l'accès BDD (`.repository.ts`).
+- `src/core/` : Logique transverse (Sécurité, Middlewares).
 - `src/lib/` : Configuration technique (ex: `prisma.ts`).
