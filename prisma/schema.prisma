@@ -1,0 +1,170 @@
+// -----------------------------------------------------------------------------
+// CONFIGURATION
+// -----------------------------------------------------------------------------
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------------------------------------------
+// ÉNUMÉRATIONS (PostgreSQL Native Enums)
+// -----------------------------------------------------------------------------
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+// -----------------------------------------------------------------------------
+// MODÈLES : IDENTITÉ ET SÉCURITÉ
+// -----------------------------------------------------------------------------
+model User {
+  id              String        @id @default(uuid()) @db.Uuid
+  username        String        @unique
+  email           String        @unique
+  passwordHash    String        @map("password_hash")
+  avatarUrl       String?       @map("avatar_url")
+  dateOfBirth     DateTime?     @db.Date @map("date_of_birth")
+  countryCode     String?       @db.VarChar(2) @map("country_code")
+  role            Role          @default(USER)
+  accountStatus   AccountStatus @default(ACTIVE) @map("account_status")
+  termsAcceptedAt DateTime?     @db.Timestamptz @map("terms_accepted_at")
+  deletedAt       DateTime?     @db.Timestamptz @map("deleted_at")
+  createdAt       DateTime      @default(now()) @db.Timestamptz @map("created_at")
+  updatedAt       DateTime      @updatedAt @db.Timestamptz @map("updated_at")
+
+  // Relations
+  trustProfile    UserTrust?
+  globalProfile   UserGlobalProfile?
+  publicPassport  PublicPassport?
+  linkedAccounts  LinkedAccount[]
+  progressions    GameServerProgression[]
+
+  @@map("users")
+}
+
+model UserTrust {
+  id                  String   @id @default(uuid()) @db.Uuid
+  userId              String   @unique @db.Uuid @map("user_id")
+  hasPasskey          Boolean  @default(false) @map("has_passkey")
+  isKycVerified       Boolean  @default(false) @map("is_kyc_verified")
+  isWorldIdVerified   Boolean  @default(false) @map("is_world_id_verified")
+  updatedAt           DateTime @updatedAt @db.Timestamptz @map("updated_at")
+
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_trusts")
+}
+
+model PublicPassport {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @unique @db.Uuid @map("user_id")
+  uniqueToken    String    @unique @map("unique_token")
+  isActive       Boolean   @default(true) @map("is_active")
+  lastScannedAt  DateTime? @db.Timestamptz @map("last_scanned_at")
+
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("public_passports")
+}
+
+model Platform {
+  id             String    @id @default(uuid()) @db.Uuid
+  name           String    @unique
+  iconUrl        String?   @map("icon_url")
+  isActive       Boolean   @default(true) @map("is_active")
+
+  linkedAccounts LinkedAccount[]
+
+  @@map("platforms")
+}
+
+model LinkedAccount {
+  id                  String   @id @default(uuid()) @db.Uuid
+  userId              String   @db.Uuid @map("user_id")
+  platformId          String   @db.Uuid @map("platform_id")
+  externalAccountId   String   @map("external_account_id")
+  accessToken         String?  @map("access_token")
+  linkedAt            DateTime @default(now()) @db.Timestamptz @map("linked_at")
+
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform            Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platformId]) // Sécurité : 1 compte max par plateforme par joueur
+  @@map("linked_accounts")
+}
+
+// -----------------------------------------------------------------------------
+// MODÈLES : GAMIFICATION ET PROGRESSION (MEGAHUB)
+// -----------------------------------------------------------------------------
+model UserGlobalProfile {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @unique @db.Uuid @map("user_id")
+  globalXp       Int       @default(0) @map("global_xp")
+  lastHubLogin   DateTime? @db.Timestamptz @map("last_hub_login")
+
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("User_global_profiles")
+}
+
+model Game {
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String    @unique
+  category    String
+  coverUrl    String?   @map("cover_url")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  servers     GameServer[]
+
+  @@map("games")
+}
+
+model GameServer {
+  id          String    @id @default(uuid()) @db.Uuid
+  gameId      String    @db.Uuid @map("game_id")
+  name        String
+  description String?
+  isActive    Boolean   @default(true) @map("is_active")
+
+  game        Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  progressions GameServerProgression[]
+
+  @@map("game_servers")
+}
+
+model Season {
+  id          String    @id @default(uuid()) @db.Uuid
+  seasonName  String    @map("season_name")
+  startDate   DateTime  @db.Timestamptz @map("start_date")
+  endDate     DateTime  @db.Timestamptz @map("end_date")
+  isActive    Boolean   @default(true) @map("is_active")
+
+  progressions GameServerProgression[]
+
+  @@map("seasons")
+}
+
+model GameServerProgression {
+  id              String    @id @default(uuid()) @db.Uuid
+  userId          String    @db.Uuid @map("user_id")
+  serverId        String    @db.Uuid @map("server_id")
+  seasonId        String    @db.Uuid @map("season_id")
+  rankedPoints    Int       @default(0) @map("ranked_points")
+  lastActivity    DateTime  @default(now()) @db.Timestamptz @map("last_activity")
+
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  server          GameServer @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  season          Season     @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, serverId, seasonId]) // Sécurité : 1 seule progression par joueur, par serveur et par saison
+  @@map("game_server_progressions")
+}
