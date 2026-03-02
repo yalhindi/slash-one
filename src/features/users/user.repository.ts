@@ -1,40 +1,83 @@
 import { prisma } from '@/lib/prisma'
-import { Prisma, User } from '@prisma/client'
+import { Prisma, User, Role } from '@prisma/client'
 
 export class UserRepository {
-    /**
-     * Crée un nouvel utilisateur
-     */
+    // ==========================================
+    // CREATE
+    // ==========================================
     static async create(data: Prisma.UserCreateInput): Promise<User> {
         return prisma.user.create({
             data,
         })
     }
 
-    /**
-     * Récupère un utilisateur via son ID (UUID)
-     */
+    // ==========================================
+    // READ (Find)
+    // ==========================================
     static async findById(id: string): Promise<User | null> {
         return prisma.user.findUnique({
             where: { id },
         })
     }
 
-    /**
-     * Récupère un utilisateur via son adresse email
-     */
     static async findByEmail(email: string): Promise<User | null> {
         return prisma.user.findUnique({
             where: { email },
         })
     }
 
-    /**
-     * Récupère un utilisateur via son pseudo (username)
-     */
     static async findByUsername(username: string): Promise<User | null> {
         return prisma.user.findUnique({
             where: { username },
+        })
+    }
+
+    static async findByRole(role: Role): Promise<User[]> {
+        return prisma.user.findMany({
+            where: {
+                role,
+                deletedAt: null // We only want active users
+            },
+        })
+    }
+
+    // ==========================================
+    // READ (Exists / Booleans)
+    // ==========================================
+    static async existsByEmail(email: string): Promise<boolean> {
+        const count = await prisma.user.count({
+            where: { email },
+        })
+        return count > 0
+    }
+
+    static async existsByUsername(username: string): Promise<boolean> {
+        const count = await prisma.user.count({
+            where: { username },
+        })
+        return count > 0
+    }
+
+    // ==========================================
+    // UPDATE & DELETE
+    // ==========================================
+    static async updateById(id: string, data: Prisma.UserUpdateInput): Promise<User> {
+        return prisma.user.update({
+            where: { id },
+            data,
+        })
+    }
+
+    /**
+     * Soft Delete
+     */
+    static async softDeleteById(id: string): Promise<User> {
+        return prisma.user.update({
+            where: { id },
+            data: {
+                deletedAt: new Date(),
+                accountStatus: 'SUSPENDED'
+            },
         })
     }
 }
