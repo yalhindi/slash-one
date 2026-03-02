@@ -38,7 +38,7 @@ POSTGRES_PASSWORD="local_password"
 POSTGRES_DB="local_db"
 
 # URL de connexion pour Prisma (utilise les variables ci-dessus)
-DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}?schema=public"
+DATABASE_URL="postgresql://local_user:local_password@localhost:5432/local_db?schema=public"
 ```
 
 ### 4. Lancer la Base de Données (Docker)
