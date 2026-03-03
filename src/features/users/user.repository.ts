@@ -80,4 +80,16 @@ export class UserRepository {
             },
         })
     }
+
+    /**
+     * Hard Delete
+     */
+    static async hardDeleteById(id: string): Promise<User> {
+        // Suppression physique et irréversible de la base de données
+        // Grâce à 'onDelete: Cascade' dans le schema.prisma, cela supprimera
+        // automatiquement les profils liés (UserTrust, UserGlobalProfile, etc.)
+        return prisma.user.delete({
+            where: {id},
+        })
+    }
 }
