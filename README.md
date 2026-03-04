@@ -70,6 +70,7 @@ L'application est maintenant accessible sur http://localhost:3000.
 
 ### 7. Lancer les tests unitaires
 Le projet utilise Vitest pour garantir la fiabilité de la logique métier. Les tests ciblent spécifiquement la couche Service en isolant complètement la base de données (via des mocks), respectant ainsi la séparation des préoccupations. 
+
 Pour exécuter les tests en ligne de commande (en mode surveillance / watch) :
 
 ```bash
