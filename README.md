@@ -9,6 +9,7 @@ Bienvenue sur le dépôt du projet ONE, l'écosystème centralisé permettant de
 - ORM : Prisma v7.4+ (avec adaptateur natif pg)
 - Base de données : PostgreSQL (via Docker)
 - Architecture : N-Tiers orientée Feature (Vertical Slicing)
+- Tests Unitaires : Vitest (avec interface UI)
 
 ---
 
@@ -67,9 +68,23 @@ L'application est maintenant accessible sur http://localhost:3000.
 
 ---
 
+### 7. Lancer les tests unitaires
+Le projet utilise Vitest pour garantir la fiabilité de la logique métier. Les tests ciblent spécifiquement la couche Service en isolant complètement la base de données (via des mocks), respectant ainsi la séparation des préoccupations.
+Pour exécuter les tests en ligne de commande (en mode surveillance / watch) :
+
+```bash
+npm run test
+```
+
+Pour ouvrir le tableau de bord interactif de Vitest dans votre navigateur :
+
+```bash
+npm run test:ui
+```
+
 ## Architecture du projet
 Le code métier est séparé des routes Next.js pour respecter une architecture N-Tiers (Controllers → Services → Repositories) :
 - `src/app/` : Routage Next.js (Front-end UI et API Controllers).
-- `src/features/` : Modules métiers (ex: `users/`, `progressions/`) contenant la logique (`.service.ts`) et l'accès BDD (`.repository.ts`).
+- `src/features/` : Modules métiers (ex: `users/`, `progressions/`) contenant la logique (`.service.ts`), la validation (.schema.ts) et l'accès BDD (`.repository.ts`).
 - `src/core/` : Logique transverse (Sécurité, Middlewares).
 - `src/lib/` : Configuration technique (ex: `prisma.ts`).
