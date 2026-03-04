@@ -7,5 +7,9 @@ export default defineConfig({
         environment: 'node',
         globals: true,
         clearMocks: true,
+        api: {
+            port: 3001,
+            host: '127.0.0.1'
+        }
     },
 })
