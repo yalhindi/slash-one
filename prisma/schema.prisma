@@ -23,30 +23,77 @@ enum AccountStatus {
   BANNED
 }
 
+enum MembraneColor {
+  SINGULARITY
+  PLASMA
+  BOREAL
+  FUSION
+}
+
+enum AuthenticatorTransport {
+  INTERNAL
+  USB
+  NFC
+  BLE
+  HYBRID
+}
+
+enum DeviceType {
+  SINGLE_DEVICE
+  MULTI_DEVICE
+}
+
+enum GameCategory {
+  FPS
+  MOBA
+  SANDBOX
+  RPG
+}
+
 // -----------------------------------------------------------------------------
 // MODÈLES : IDENTITÉ ET SÉCURITÉ
 // -----------------------------------------------------------------------------
 model User {
-  id              String        @id @default(uuid()) @db.Uuid
-  username        String        @unique @db.VarChar(30)
-  email           String        @unique @db.VarChar(255)
-  passwordHash    String        @map("password_hash") @db.VarChar(255)
-  avatarUrl       String?       @map("avatar_url")
-  dateOfBirth     DateTime?     @db.Date @map("date_of_birth")
-  countryCode     String?       @db.VarChar(2) @map("country_code")
-  role            Role          @default(USER)
-  accountStatus   AccountStatus @default(ACTIVE) @map("account_status")
-  termsAcceptedAt DateTime?     @db.Timestamptz @map("terms_accepted_at")
-  deletedAt       DateTime?     @db.Timestamptz @map("deleted_at")
-  createdAt       DateTime      @default(now()) @db.Timestamptz @map("created_at")
-  updatedAt       DateTime      @updatedAt @db.Timestamptz @map("updated_at")
+  id                      String        @id @default(uuid()) @db.Uuid
+
+  // Identité Sociale et Membrane
+  username                String        @db.VarChar(14) // Max 14 caractères
+  chosenDigit             String        @db.Char(1) @map("chosen_digit")
+  chosenLetter            String        @db.Char(1) @map("chosen_letter")
+  randomLetters           String        @db.Char(4) @map("random_letters")
+  randomDigits            String        @db.Char(3) @map("random_digits")
+  membraneColor           MembraneColor @default(SINGULARITY) @map("membrane_color")
+
+  // Certification
+  isCertified             Boolean       @default(false) @map("is_certified")
+  lastNameChangeDate      DateTime?     @db.Timestamptz @map("last_name_change_date")
+  freeNameChangeAvailable Boolean       @default(false) @map("free_name_change_available")
+
+  // Coordonnées
+  email                   String        @unique @db.VarChar(255)
+  phoneNumber             String?       @map("phone_number")
+  avatarUrl               String?       @map("avatar_url")
+  dateOfBirth             DateTime?     @db.Date @map("date_of_birth")
+  countryCode             String?       @db.VarChar(2) @map("country_code")
+
+  // Statut
+  role                    Role          @default(USER)
+  accountStatus           AccountStatus @default(ACTIVE) @map("account_status")
+  termsAcceptedAt         DateTime?     @db.Timestamptz @map("terms_accepted_at")
+  deletedAt               DateTime?     @db.Timestamptz @map("deleted_at")
+  createdAt               DateTime      @default(now()) @db.Timestamptz @map("created_at")
+  updatedAt               DateTime      @updatedAt @db.Timestamptz @map("updated_at")
 
   // Relations
   trustProfile    UserTrust?
   globalProfile   UserGlobalProfile?
   publicPassport  PublicPassport?
   linkedAccounts  LinkedAccount[]
+  passkeys        Passkey[]
   progressions    GameServerProgression[]
+
+  // Règle Métier : Garantie l'unicité du Nom Social public (ex: "Neo 931 M")
+  @@unique([username, randomDigits, chosenLetter])
 
   @@map("users")
 }
@@ -54,9 +101,8 @@ model User {
 model UserTrust {
   id                  String   @id @default(uuid()) @db.Uuid
   userId              String   @unique @db.Uuid @map("user_id")
-  hasPasskey          Boolean  @default(false) @map("has_passkey")
-  isKycVerified       Boolean  @default(false) @map("is_kyc_verified")
-  isWorldIdVerified   Boolean  @default(false) @map("is_world_id_verified")
+  isHumanityVerified  Boolean  @default(false) @map("is_humanity_verified")
+  cartridgeSerial     String?  @unique @map("cartridge_serial") // Pour la Cartouche physique
   updatedAt           DateTime @updatedAt @db.Timestamptz @map("updated_at")
 
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -64,10 +110,40 @@ model UserTrust {
   @@map("user_trusts")
 }
 
+// -----------------------------------------------------------------------------
+// MODÈLES : AUTHENTIFICATION (Passwordless)
+// -----------------------------------------------------------------------------
+model OtpRequest {
+  email     String   @id
+  code      String // code à 6 chiffres
+  expiresAt DateTime @db.Timestamptz @map("expires_at")
+
+  @@map("otp_requests")
+}
+
+model Passkey {
+  id             String                   @id @default(uuid()) @db.Uuid
+  userId         String                   @db.Uuid @map("user_id")
+  credentialId   String                   @unique @map("credential_id")
+  publicKey      Bytes                    @map("public_key")
+  counter        Int
+  deviceType     DeviceType               @map("device_type")
+  backedUp       Boolean                  @default(false) @map("backed_up")
+  transports     AuthenticatorTransport[]
+  createdAt      DateTime                 @default(now()) @db.Timestamptz @map("created_at")
+
+  user           User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("passkeys")
+}
+
+// -----------------------------------------------------------------------------
+// MODÈLES : PASSEPORT & PLATEFORMES
+// -----------------------------------------------------------------------------
 model PublicPassport {
   id             String    @id @default(uuid()) @db.Uuid
   userId         String    @unique @db.Uuid @map("user_id")
-  uniqueToken    String    @unique @map("unique_token")
+  uniqueToken    String    @unique @map("unique_token") // pour le QR code
   isActive       Boolean   @default(true) @map("is_active")
   lastScannedAt  DateTime? @db.Timestamptz @map("last_scanned_at")
 
@@ -93,9 +169,11 @@ model LinkedAccount {
   platformId          String   @db.Uuid @map("platform_id")
   externalAccountId   String   @map("external_account_id")
   accessToken         String?  @map("access_token")
+  lastSyncedAt        DateTime? @db.Timestamptz @map("last_synced_at") // Cache
+  cachedProfileData   Json?     @map("cached_profile_data") // Cache
   linkedAt            DateTime @default(now()) @db.Timestamptz @map("linked_at")
 
-  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   platform            Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
 
   @@unique([userId, platformId]) // Sécurité : 1 compte max par plateforme par joueur
@@ -113,15 +191,15 @@ model UserGlobalProfile {
 
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("User_global_profiles")
+  @@map("user_global_profiles")
 }
 
 model Game {
-  id          String    @id @default(uuid()) @db.Uuid
-  name        String    @unique
-  category    String
-  coverUrl    String?   @map("cover_url")
-  isActive    Boolean   @default(true) @map("is_active")
+  id          String       @id @default(uuid()) @db.Uuid
+  name        String       @unique
+  category    GameCategory
+  coverUrl    String?      @map("cover_url")
+  isActive    Boolean      @default(true) @map("is_active")
 
   servers     GameServer[]
 
