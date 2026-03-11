@@ -143,7 +143,7 @@ model Passkey {
 model PublicPassport {
   id             String    @id @default(uuid()) @db.Uuid
   userId         String    @unique @db.Uuid @map("user_id")
-  uniqueToken    String    @unique @map("unique_token") // pour le QR code
+  uniqueToken    String    @unique @map("unique_token") // la "Graine" (Seed) cryptographique (ou le numéro de série immuable) du passeport
   isActive       Boolean   @default(true) @map("is_active")
   lastScannedAt  DateTime? @db.Timestamptz @map("last_scanned_at")
 
