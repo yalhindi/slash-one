@@ -92,8 +92,8 @@ model User {
   passkeys        Passkey[]
   progressions    GameServerProgression[]
 
-  // Règle Métier : Garantie l'unicité du Nom Social public (ex: "Neo 931 M")
-  @@unique([username, randomDigits, chosenLetter])
+  // Règle Métier : Garantie l'unicité de l'identifiant SLSH ID
+  @@unique([chosenDigit, randomLetters, randomDigits, chosenLetter])
 
   @@map("users")
 }
