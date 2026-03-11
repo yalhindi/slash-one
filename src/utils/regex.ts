@@ -1,12 +1,14 @@
 export const REGEX = {
-    /**
-     * Uniquement lettres (minuscules/majuscules), chiffres et underscores. Pas d'espaces.
-     */
-    USERNAME: /^[a-zA-Z0-9_]+$/,
+    // Uniquement des lettres
+    USERNAME: /^[a-zA-Z]+$/,
 
-    /**
-     * Au moins UNE majuscule, UNE minuscule, UN chiffre et UN caractère spécial.
-     */
-    PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+    // Exactement un chiffre de 0 à 9
+    CHOSEN_DIGIT: /^[0-9]$/,
+
+    // Exactement une lettre de A à Z (insensible à la casse)
+    CHOSEN_LETTER: /^[A-Z]$/i,
+
+    // Format International E.164 (ex: +33123456789)
+    PHONE_NUMBER: /^\+[1-9]\d{1,14}$/,
 
 }
