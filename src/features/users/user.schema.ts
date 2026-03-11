@@ -1,4 +1,3 @@
-// features/users/user.schema.ts
 import { z } from 'zod'
 import { MembraneColor } from '@prisma/client'
 import {REGEX} from "@/utils/regex";
