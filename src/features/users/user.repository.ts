@@ -64,15 +64,14 @@ export class UserRepository {
     }
 
     // Recherche par l'Identifiant Social Public (ex: "Neo 931 M")
-    // Utilise la clé composite @@unique de notre schema.prisma
-    static async findBySocialId(username: string, randomDigits: string, chosenLetter: string): Promise<User | null> {
-        return prisma.user.findUnique({
+    // Attention : Cette méthode peut renvoyer des doublons (homonymes).
+    // La différenciation visuelle (couleur/avatar) sera gérée côté client.
+    static async findBySocialId(username: string, randomDigits: string, chosenLetter: string) {
+        return prisma.user.findMany({
             where: {
-                username_randomDigits_chosenLetter: {
-                    username,
-                    randomDigits,
-                    chosenLetter
-                }
+                username: username,
+                randomDigits: randomDigits,
+                chosenLetter: chosenLetter
             }
         })
     }
@@ -109,6 +108,15 @@ export class UserRepository {
             }
         })
         return certifiedUser !== null
+    }
+
+
+    static async getAccountStatus(email: string) {
+        const user = await prisma.user.findUnique({
+            where: { email },
+            select: { accountStatus: true }
+        })
+        return user?.accountStatus || null
     }
 
     // ==========================================
