@@ -13,12 +13,12 @@ export const createUserSchema = z.object({
 
     // Règle : Un chiffre choisi (0-9)
     chosenDigit: z.string().
-        length(1)
+        length(1, "VALIDATION.DIGIT_INVALID")
         .regex(REGEX.CHOSEN_DIGIT, "VALIDATION.DIGIT_INVALID"),
 
     // Règle : Une lettre choisie (A-Z, on force la majuscule)
     chosenLetter: z.string()
-        .length(1)
+        .length(1, "VALIDATION.LETTER_INVALID")
         .regex(REGEX.CHOSEN_LETTER, "VALIDATION.LETTER_INVALID")
         .toUpperCase(),
 
