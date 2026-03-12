@@ -113,11 +113,14 @@ model UserTrust {
 // -----------------------------------------------------------------------------
 // MODÈLES : AUTHENTIFICATION (Passwordless)
 // -----------------------------------------------------------------------------
-model OtpRequest {
-  email     String   @id
-  code      String // code à 6 chiffres
-  expiresAt DateTime @db.Timestamptz @map("expires_at")
 
+// Pour Auth.js
+model VerificationToken {
+
+  identifier String   @map("email")
+  token      String   @map("code")
+  expires    DateTime @db.Timestamptz @map("expires_at")
+  @@unique([identifier, token])
   @@map("otp_requests")
 }
 
