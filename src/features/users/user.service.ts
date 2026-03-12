@@ -143,4 +143,26 @@ export class UserService {
         }
         return await UserRepository.hardDeleteById(id)
     }
+
+    // ==========================================
+    // VÉRIFICATIONS MÉTIER
+    // ==========================================
+    static async verifyLoginEligibility(email: string): Promise<boolean> {
+        const status = await UserRepository.getAccountStatus(email)
+
+        if (!status) {
+            throw new Error("USER.NOT_FOUND")
+        }
+
+        if (status === 'BANNED') {
+            throw new Error("USER.ACCOUNT_BANNED")
+        }
+
+        if (status === 'SUSPENDED') {
+            throw new Error("USER.ACCOUNT_SUSPENDED")
+        }
+
+        // Si on arrive ici, le statut est 'ACTIVE'
+        return true
+    }
 }
