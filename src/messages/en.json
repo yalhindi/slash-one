@@ -1,21 +1,22 @@
 {
   "USER": {
     "NOT_FOUND": "User not found.",
-    "EMAIL_EXISTS": "This email is already taken.",
-    "USERNAME_EXISTS": "This username is already taken.",
-    "INVALID_PASSWORD": "Incorrect current password."
+    "EMAIL_EXISTS": "This email is already linked to an account.",
+    "CERTIFIED_NAME_WARNING": "This name is already used and operated as a brand by a public figure. Do you still want to validate your choice?",
+    "SLSH_ID_GENERATION_FAILED": "An error occurred while generating your SLSH ID. Please try again."
   },
   "VALIDATION": {
     "EMAIL_INVALID": "Invalid email format.",
-    "USERNAME_TOO_SHORT": "Username must be at least 3 characters long.",
-    "USERNAME_TOO_LONG": "Username cannot exceed 30 characters.",
-    "USERNAME_INVALID": "Username can only contain letters, numbers, and underscores.",
-    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters long.",
-    "PASSWORD_TOO_LONG":"Password cannot exceed 255 characters.",
-    "PASSWORD_INVALID": "Password must contain at least one uppercase letter, one number, and one special character.",
+    "USERNAME_TOO_SHORT": "Username must be at least 2 characters long.",
+    "USERNAME_TOO_LONG": "Username cannot exceed 14 characters.",
+    "USERNAME_LETTERS_ONLY": "Username can only contain letters (no numbers, spaces, or special characters).",
+    "DIGIT_INVALID": "You must choose exactly one digit (0-9).",
+    "LETTER_INVALID": "You must choose exactly one letter (A-Z).",
+    "COLOR_INVALID": "Please select a valid Membrane color.",
+    "PHONE_INVALID": "Invalid phone number format. Please use international format (e.g., +33123456789).",
     "URL_INVALID": "Invalid URL format.",
     "COUNTRY_CODE_INVALID": "Country code must be exactly 2 characters long.",
-    "REQUIRED": "This field is required.",
-    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
+    "DOB_IN_FUTURE": "Date of birth cannot be in the future.",
+    "REQUIRED": "This field is required."
   }
 }

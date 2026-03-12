@@ -1,21 +1,22 @@
 {
   "USER": {
     "NOT_FOUND": "Utilisateur introuvable.",
-    "EMAIL_EXISTS": "Cet email est déjà utilisé.",
-    "USERNAME_EXISTS": "Ce pseudo est déjà pris.",
-    "INVALID_PASSWORD": "Mot de passe actuel incorrect."
+    "EMAIL_EXISTS": "Cet email est déjà associé à un compte.",
+    "CERTIFIED_NAME_WARNING": "Ce nom est déjà utilisé et exploité comme image de marque par une personnalité publique. Voulez-vous toujours valider votre choix ?",
+    "SLSH_ID_GENERATION_FAILED": "Un problème est survenu lors de la génération de votre SLSH ID. Veuillez réessayer."
   },
   "VALIDATION": {
     "EMAIL_INVALID": "Le format de l'email est invalide.",
-    "USERNAME_TOO_SHORT": "Le pseudo doit contenir au moins 3 caractères.",
-    "USERNAME_TOO_LONG": "Le pseudo ne peut pas dépasser 30 caractères.",
-    "USERNAME_INVALID": "Le pseudo ne peut contenir que des lettres, chiffres et underscores.",
-    "PASSWORD_TOO_SHORT": "Le mot de passe doit contenir au moins 8 caractères.",
-    "PASSWORD_TOO_LONG": "Le mot de passe ne peut pas dépasser 255 caractères.",
-    "PASSWORD_INVALID": "Le mot de passe doit contenir au moins une majuscule, un chiffre et un caractère spécial.",
+    "USERNAME_TOO_SHORT": "Le pseudo doit contenir au moins 2 caractères.",
+    "USERNAME_TOO_LONG": "Le pseudo ne peut pas dépasser 14 caractères.",
+    "USERNAME_LETTERS_ONLY": "Le pseudo ne peut contenir que des lettres (sans chiffres, espaces ou caractères spéciaux).",
+    "DIGIT_INVALID": "Vous devez choisir exactement un chiffre (0-9).",
+    "LETTER_INVALID": "Vous devez choisir exactement une lettre (A-Z).",
+    "COLOR_INVALID": "Veuillez sélectionner une couleur de Membrane valide.",
+    "PHONE_INVALID": "Format de numéro de téléphone invalide. Veuillez utiliser le format international (ex: +33123456789).",
     "URL_INVALID": "Le format de l'URL est invalide.",
     "COUNTRY_CODE_INVALID": "Le code pays doit faire exactement 2 caractères.",
-    "REQUIRED": "Ce champ est requis.",
-    "PASSWORDS_DO_NOT_MATCH": "Les mots de passe ne correspondent pas."
+    "DOB_IN_FUTURE": "La date de naissance ne peut pas être dans le futur.",
+    "REQUIRED": "Ce champ est requis."
   }
 }

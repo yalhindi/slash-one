@@ -1,13 +1,50 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma, User, Role } from '@prisma/client'
 
+// On crée un type spécifique pour l'entrée du Repository afin de forcer
+// le Service à envoyer les données atomiques de la Membrane, tout en
+// laissant le Repository gérer la création des profils liés.
+type CreateUserPayload = Omit<Prisma.UserCreateInput, 'trustProfile' | 'globalProfile' | 'publicPassport'> & {
+    passportToken: string;
+}
+
 export class UserRepository {
+
     // ==========================================
-    // CREATE
+    // CREATE (Avec Nested Writes / Transactions)
     // ==========================================
-    static async create(data: Prisma.UserCreateInput): Promise<User> {
+    static async create(data: CreateUserPayload) {
+        // On extrait le passportToken du reste des données pour Prisma
+        const { passportToken, ...userData } = data;
+
         return prisma.user.create({
-            data,
+            data: {
+                ...userData,
+
+                trustProfile: {
+                    create: {
+                        isHumanityVerified: false
+                    }
+                },
+
+                globalProfile: {
+                    create: {
+                        globalXp: 0
+                    }
+                },
+
+                publicPassport: {
+                    create: {
+                        uniqueToken: passportToken,
+                        isActive: true
+                    }
+                }
+            },
+            include: {
+                trustProfile: true,
+                globalProfile: true,
+                publicPassport: true
+            }
         })
     }
 
@@ -26,9 +63,17 @@ export class UserRepository {
         })
     }
 
-    static async findByUsername(username: string): Promise<User | null> {
+    // Recherche par l'Identifiant Social Public (ex: "Neo 931 M")
+    // Utilise la clé composite @@unique de notre schema.prisma
+    static async findBySocialId(username: string, randomDigits: string, chosenLetter: string): Promise<User | null> {
         return prisma.user.findUnique({
-            where: { username },
+            where: {
+                username_randomDigits_chosenLetter: {
+                    username,
+                    randomDigits,
+                    chosenLetter
+                }
+            }
         })
     }
 
@@ -36,13 +81,13 @@ export class UserRepository {
         return prisma.user.findMany({
             where: {
                 role,
-                deletedAt: null // We only want active users
+                deletedAt: null // Seulement les utilisateurs actifs
             },
         })
     }
 
     // ==========================================
-    // READ (Exists / Booleans)
+    // READ (Règles Métier & Vérifications)
     // ==========================================
     static async existsByEmail(email: string): Promise<boolean> {
         const count = await prisma.user.count({
@@ -51,11 +96,19 @@ export class UserRepository {
         return count > 0
     }
 
-    static async existsByUsername(username: string): Promise<boolean> {
-        const count = await prisma.user.count({
-            where: { username },
+
+    // Vérifier si le nom appartient à une personnalité publique
+    static async isUsernameCertified(username: string): Promise<boolean> {
+        const certifiedUser = await prisma.user.findFirst({
+            where: {
+                username: {
+                    equals: username,
+                    mode: 'insensitive' // Recherche insensible à la casse
+                },
+                isCertified: true
+            }
         })
-        return count > 0
+        return certifiedUser !== null
     }
 
     // ==========================================
@@ -82,14 +135,13 @@ export class UserRepository {
     }
 
     /**
-     * Hard Delete
+     * Hard Delete (Droit à l'oubli RGPD)
      */
     static async hardDeleteById(id: string): Promise<User> {
-        // Suppression physique et irréversible de la base de données
-        // Grâce à 'onDelete: Cascade' dans le schema.prisma, cela supprimera
-        // automatiquement les profils liés (UserTrust, UserGlobalProfile, etc.)
+        // La suppression physique ('onDelete: Cascade' dans Prisma) détruit
+        // automatiquement le UserTrust, UserGlobalProfile, les Passkeys liés ect.
         return prisma.user.delete({
-            where: {id},
+            where: { id },
         })
     }
 }
