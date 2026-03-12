@@ -7,7 +7,9 @@
     "NOT_FOUND": "Utilisateur introuvable.",
     "EMAIL_EXISTS": "Cet email est déjà associé à un compte.",
     "CERTIFIED_NAME_WARNING": "Ce nom est déjà utilisé et exploité comme image de marque par une personnalité publique. Voulez-vous toujours valider votre choix ?",
-    "SLSH_ID_GENERATION_FAILED": "Un problème est survenu lors de la génération de votre SLSH ID. Veuillez réessayer."
+    "SLSH_ID_GENERATION_FAILED": "Un problème est survenu lors de la génération de votre SLSH ID. Veuillez réessayer.",
+    "ACCOUNT_BANNED": "Votre compte a été banni.",
+    "ACCOUNT_SUSPENDED": "Votre compte est temporairement suspendu."
   },
   "VALIDATION": {
     "EMAIL_INVALID": "Le format de l'email est invalide.",
