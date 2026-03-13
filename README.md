@@ -3,11 +3,13 @@
 Bienvenue sur le dépôt du projet ONE, l'écosystème centralisé permettant de récolter et lier les progressions des joueurs sur différents serveurs de jeux (Minecraft, etc.).
 
 ## Stack Technique
-- Framework : Next.js 15+ (App Router, React Compiler active)
+- Framework : Next.js 15+ (App Router, React Compiler activé)
 - Langage : TypeScript
 - Style : Tailwind CSS v4
 - ORM : Prisma v7.4+ (avec adaptateur natif pg)
 - Base de données : PostgreSQL (via Docker)
+- Authentification : Auth.js v5 (NextAuth) - Approche Passwordless (OTP / Mailtrap)
+- Validation des données : Zod
 - Architecture : N-Tiers orientée Feature (Vertical Slicing)
 - Tests Unitaires : Vitest (avec interface UI)
 
@@ -29,17 +31,27 @@ npm install
 ```
 
 ### 3. Variables d'environnement
-Créez un fichier `.env` a la racine du projet. Ce fichier est ignoré par Git pour des raisons de securité.
-Utilisez la structure suivante :
+Créez un fichier `.env` à la racine du projet en vous basant sur le fichier `.env.example` fourni. Ce fichier `.env` est ignoré par Git pour des raisons de sécurité.
+Voici la structure attendue :
 
 ```env
-# Remplacer "local_user", "local_password" et "local_db" par vos propre valeurs
+# --- 1. Base de données (PostgreSQL via Docker) ---
 POSTGRES_USER="local_user"
 POSTGRES_PASSWORD="local_password"
 POSTGRES_DB="local_db"
-
-# URL de connexion pour Prisma (utilise les variables ci-dessus)
 DATABASE_URL="postgresql://local_user:local_password@localhost:5432/local_db?schema=public"
+
+# --- 2. Authentification (Auth.js) ---
+NEXTAUTH_URL="http://localhost:3000"
+# Générez une clé secrète avec : openssl rand -base64 32 ou npx auth secret
+AUTH_SECRET="votre_cle_secrete"
+
+# --- 3. Email Provider (Mailtrap pour le développement) ---
+EMAIL_SERVER_USER="identifiant_mailtrap"
+EMAIL_SERVER_PASSWORD="mot_de_passe_mailtrap"
+EMAIL_SERVER_HOST="sandbox.smtp.mailtrap.io"
+EMAIL_SERVER_PORT="2525"
+EMAIL_FROM="noreply@slash.xyz"
 ```
 
 ### 4. Lancer la Base de Données (Docker)
@@ -85,7 +97,8 @@ npm run test:ui
 
 ## Architecture du projet
 Le code métier est séparé des routes Next.js pour respecter une architecture N-Tiers (Controllers → Services → Repositories) :
-- `src/app/` : Routage Next.js (Front-end UI et API Controllers).
-- `src/features/` : Modules métiers (ex: `users/`, `progressions/`) contenant la logique (`.service.ts`), la validation (.schema.ts) et l'accès BDD (`.repository.ts`).
-- `src/core/` : Logique transverse (Sécurité, Middlewares).
-- `src/lib/` : Configuration technique (ex: `prisma.ts`).
+- `src/app/` : Routage Next.js (Front-end UI, API Controllers et routes Catch-All d'authentification).
+- `src/features/` : Modules métiers (ex: `users/`, `progressions/`) contenant la logique (`.service.ts`), la validation stricte avec Zod (`.schema.ts`) et l'accès BDD (`.repository.ts`).
+- `src/core/` : Logique transverse (Sécurité, Middlewares globaux).
+- `src/lib/` : Configuration technique et clients externes (ex: `prisma.ts`).
+- `src/auth.ts` : Configuration centrale du moteur de sécurité (NextAuth / Auth.js) et de l'authentification Passwordless.
