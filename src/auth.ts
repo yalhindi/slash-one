@@ -20,6 +20,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 },
             },
             from: process.env.EMAIL_FROM,
+
+            // Le code expire au bout de 10 minutes (600 secondes)
+            maxAge: 10 * 60,
+
             // On personnalise la génération de l'OTP (par défaut c'est un token long, nous on veut 6 chiffres)
             generateVerificationToken() {
                 // On génère un int entre 100000 et 999999
