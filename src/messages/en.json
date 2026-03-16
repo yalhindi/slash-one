@@ -24,5 +24,38 @@
     "COUNTRY_CODE_INVALID": "Country code must be exactly 2 characters long.",
     "DOB_IN_FUTURE": "Date of birth cannot be in the future.",
     "REQUIRED": "This field is required."
+  },
+  "Register": {
+    "title": "Digital Identity Creation",
+    "subtitle": "Please configure the fundamental parameters of your Membrane.",
+    "steps": {
+      "email": "Contact",
+      "name": "Identity",
+      "foundations": "Foundations",
+      "resonance": "Resonance"
+    },
+    "emailLabel": "Synchronization Email",
+    "emailPlaceholder": "your@email.com",
+    "nameLabel": "Membrane Name",
+    "namePlaceholder": "Enter your name",
+    "nameHelp": "Letters only. Maximum 14 characters. No numbers or symbols.",
+    "digitLabel": "Digit",
+    "digitPlaceholder": "0-9",
+    "letterLabel": "Letter",
+    "letterPlaceholder": "A-Z",
+    "irreversibleWarning": "Warning: The choice of Digit and Letter is strictly irreversible.",
+    "colorLabel": "Visual Signature of the Membrane",
+    "colors": {
+      "singularity": "Singularity",
+      "plasma": "Plasma",
+      "boreal": "Boreal",
+      "fusion": "Fusion"
+    },
+    "actions": {
+      "next": "Continue",
+      "back": "Back",
+      "submit": "Forge my Identity"
+    },
+    "alreadyHaveAccount": "Identity already established? Authenticate"
   }
 }

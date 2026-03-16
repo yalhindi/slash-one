@@ -24,5 +24,38 @@
     "COUNTRY_CODE_INVALID": "Le code pays doit faire exactement 2 caractères.",
     "DOB_IN_FUTURE": "La date de naissance ne peut pas être dans le futur.",
     "REQUIRED": "Ce champ est requis."
+  },
+  "Register": {
+    "title": "Création de l'Identité Numérique",
+    "subtitle": "Veuillez configurer les paramètres fondamentaux de votre Membrane.",
+    "steps": {
+      "email": "Contact",
+      "name": "Identité",
+      "foundations": "Fondations",
+      "resonance": "Résonance"
+    },
+    "emailLabel": "Email de synchronisation",
+    "emailPlaceholder": "votre@email.com",
+    "nameLabel": "Nom de la Membrane",
+    "namePlaceholder": "Entrez votre nom",
+    "nameHelp": "Uniquement des lettres. 14 caractères maximum. Sans chiffres ni symboles.",
+    "digitLabel": "Chiffre",
+    "digitPlaceholder": "0-9",
+    "letterLabel": "Lettre",
+    "letterPlaceholder": "A-Z",
+    "irreversibleWarning": "Attention : Le choix du Chiffre et de la Lettre est strictement irréversible.",
+    "colorLabel": "Signature visuelle de la Membrane",
+    "colors": {
+      "singularity": "Singularité",
+      "plasma": "Plasma",
+      "boreal": "Boréal",
+      "fusion": "Fusion"
+    },
+    "actions": {
+      "next": "Continuer",
+      "back": "Retour",
+      "submit": "Forger mon Identité"
+    },
+    "alreadyHaveAccount": "Identité déjà établie ? Procéder à l'authentification"
   }
 }
