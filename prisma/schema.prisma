@@ -71,6 +71,7 @@ model User {
 
   // Coordonnées
   email                   String        @unique @db.VarChar(255)
+  emailVerified  DateTime? @map("email_verified") // Pour Auth.js
   phoneNumber             String?       @map("phone_number")
   avatarUrl               String?       @map("avatar_url")
   dateOfBirth             DateTime?     @db.Date @map("date_of_birth")
