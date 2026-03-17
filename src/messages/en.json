@@ -32,7 +32,7 @@
       "email": "Contact",
       "name": "Identity",
       "foundations": "Foundations",
-      "visualSignature": "Visual Signature"
+      "membraneColor": "Visual Signature"
     },
     "emailLabel": "Synchronization Email",
     "emailPlaceholder": "your@email.com",

@@ -32,7 +32,7 @@
       "email": "Contact",
       "name": "Identité",
       "foundations": "Fondations",
-      "visualSignature": "Signature Visuelle"
+      "membraneColor": "Signature Visuelle"
     },
     "emailLabel": "Email de synchronisation",
     "emailPlaceholder": "votre@email.com",
