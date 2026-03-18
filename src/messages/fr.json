@@ -1,7 +1,8 @@
 {
   "API": {
     "INTERNAL_SERVER_ERROR": "Une erreur inattendue des serveurs Slash s'est produite. Veuillez réessayer plus tard.",
-    "VALIDATION_FAILED": "Certaines informations de votre Membrane sont invalides. Veuillez vérifier le formulaire."
+    "VALIDATION_FAILED": "Certaines informations de votre Membrane sont invalides. Veuillez vérifier le formulaire.",
+    "AUTH_SEND_FAILED": "Impossible d'envoyer le code de sécurité. Veuillez réessayer."
   },
   "USER": {
     "NOT_FOUND": "Utilisateur introuvable.",

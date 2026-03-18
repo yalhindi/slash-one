@@ -1,7 +1,8 @@
 {
   "API": {
     "INTERNAL_SERVER_ERROR": "An unexpected Slash server error occurred. Please try again later.",
-    "VALIDATION_FAILED": "Some information in your Membrane is invalid. Please check the form."
+    "VALIDATION_FAILED": "Some information in your Membrane is invalid. Please check the form.",
+    "AUTH_SEND_FAILED": "Failed to send the security code. Please try again."
   },
   "USER": {
     "NOT_FOUND": "User not found.",
