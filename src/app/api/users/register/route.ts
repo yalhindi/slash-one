@@ -47,7 +47,7 @@ export async function POST(request: Request) {
             })
 
             return NextResponse.json(
-                { error: 'VALIDATION_FAILED', details: fieldErrors },
+                { error: 'API.VALIDATION_FAILED', details: fieldErrors },
                 { status: 400 } // Bad Request
             )
         }
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         // Erreur système inattendue (Base de données en panne, etc.)
         console.error('[POST /api/users/register] FATAL ERROR:', error)
         return NextResponse.json(
-            { error: 'INTERNAL_SERVER_ERROR' },
+            { error: 'API.INTERNAL_SERVER_ERROR' },
             { status: 500 } // Internal Server Error
         )
     }
