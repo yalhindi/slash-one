@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { toast } from "sonner";
 
 import { createUserSchema } from "@/features/users/user.schema";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,12 +17,20 @@ import { StepUsername } from "./register-steps/StepUsername";
 import { StepFoundations } from "./register-steps/StepFoundations";
 import { StepMembraneColor } from "./register-steps/StepMembraneColor";
 
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+
 type RegisterFormValues = z.input<typeof createUserSchema>;
 const TOTAL_STEPS = 4;
 
 export function RegisterForm() {
-    const t = useTranslations("Register");
+    const tReg = useTranslations("Register");
+    const tError = useTranslations();
     const [currentStep, setCurrentStep] = useState(1);
+
+    const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [hasCertifiedWarning, setHasCertifiedWarning] = useState(false);
 
     // Initialisation du Chef d'Orchestre (Mode onTouched pour la meilleure UX)
     const methods = useForm<RegisterFormValues>({
@@ -67,8 +76,76 @@ export function RegisterForm() {
     const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
     // Soumission finale au Backend
-    const onSubmit = (data: RegisterFormValues) => {
-        console.log("Données validées prêtes pour le backend :", data);
+    const onSubmit = async (data: RegisterFormValues) => {
+        setIsSubmitting(true);
+        setHasCertifiedWarning(false); // On réinitialise au cas où
+
+        try {
+            const response = await fetch('/api/users/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            // --- GESTION DES ERREURS BACKEND ---
+            if (!response.ok) {
+                if (response.status === 400 && result.details) {
+                    Object.keys(result.details).forEach((field) => {
+                        methods.setError(field as keyof RegisterFormValues, {
+                            type: "server",
+                            message: result.details[field][0]
+                        });
+                    });
+                    setCurrentStep(1);
+                    return;
+                }
+
+                // Géstion de ConflictErrors
+                if (response.status === 409) {
+                    if (result.error === "USER.EMAIL_EXISTS") {
+                        methods.setError("email", {
+                            type: "server",
+                            message: "USER.EMAIL_EXISTS" });
+                        setCurrentStep(1);
+                        return;
+                    }
+
+                    if (result.error === "USER.CERTIFIED_NAME_WARNING") {
+                        // On déclenche l'affichage de l'alerte UI, et on arrête la fonction ici
+                        setHasCertifiedWarning(true);
+                        return;
+                    }
+                }
+
+                // Pour TOUTES les autres erreurs (409 Génération, 500, etc.)
+                // On utilise la clé du back, on la traduit, et on utilise 'return' pour stopper la fonction.
+                const fallbackError = result.error || "API.INTERNAL_SERVER_ERROR";
+                toast.error(tError(fallbackError));
+                return;
+            }
+
+            // --- SUCCÈS (201 Created) ---
+            const signInResult = await signIn("nodemailer", {
+                email: data.email,
+                redirect: false,
+            });
+
+            if (signInResult?.error) {
+                toast.error(tError("API.AUTH_SEND_FAILED"));
+                return;
+            }
+
+            // Redirection vers la saisie de l'OTP
+            router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+
+        } catch (error) {
+            console.error("Crash critique :", error);
+            toast.error(tError("API.INTERNAL_SERVER_ERROR"));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     // Le fond dynamique (Bleu nuit par défaut, puis Aura spécifique à l'étape 4)
@@ -111,10 +188,10 @@ export function RegisterForm() {
                     <div className="mx-auto w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(37,99,235,0.5)]">
                         <span className="text-white font-bold text-xl">S</span>
                     </div>
-                    <CardTitle className="text-2xl font-bold tracking-tight text-white">{t("title")}</CardTitle>
-                    <CardDescription className="text-slate-400">{t("subtitle")}</CardDescription>
+                    <CardTitle className="text-2xl font-bold tracking-tight text-white">{tReg("title")}</CardTitle>
+                    <CardDescription className="text-slate-400">{tReg("subtitle")}</CardDescription>
                     <div className="text-xs text-blue-400 font-medium tracking-widest uppercase pt-2 transition-all">
-                        {t("stepProgress", { current: currentStep, total: TOTAL_STEPS })}
+                        {tReg("stepProgress", { current: currentStep, total: TOTAL_STEPS })}
                     </div>
                 </CardHeader>
 
@@ -137,44 +214,89 @@ export function RegisterForm() {
                 </CardContent>
 
                 <CardFooter className="flex flex-col space-y-4">
+                    {/* --- ZONE D'ALERTE : NOM CERTIFIÉ --- */}
+                    {hasCertifiedWarning && (
+                        <div className="w-full p-4 mb-2 bg-amber-500/10 border border-amber-500/30 rounded-lg animate-in fade-in zoom-in duration-300">
+                            <p className="text-sm text-amber-500/90 text-center font-medium leading-relaxed">
+                                {tError("USER.CERTIFIED_NAME_WARNING")}
+                            </p>
+                        </div>
+                    )}
+
                     <div className="flex w-full gap-4 mt-2">
-                        {/* Le bouton Retour n'existe que si on a passé l'étape 1 */}
-                        {currentStep > 1 && (
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={prevStep}
-                                className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
-                            >
-                                {t("actions.back")}
-                            </Button>
-                        )}
-
-                        {/* Le bouton Suivant ou Soumettre */}
-                        {currentStep < TOTAL_STEPS ? (
-                            <Button
-                                type="button"
-                                onClick={nextStep}
-                                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white"
-                            >
-                                {t("actions.next")}
-                            </Button>
+                        {/* SI L'ALERTE EST AFFICHÉE : Boutons spécifiques */}
+                        {hasCertifiedWarning ? (
+                            <>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    // S'il refuse, on le renvoie à l'étape 2 et on cache l'alerte
+                                    onClick={() => {
+                                        setHasCertifiedWarning(false);
+                                        setCurrentStep(2);
+                                    }}
+                                    className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
+                                >
+                                    Modifier le nom
+                                </Button>
+                                <Button
+                                    type="button"
+                                    disabled={isSubmitting}
+                                    onClick={() => {
+                                        // S'il valide, on met le bypass à true, et on relance la soumission !
+                                        methods.setValue("bypassCertifiedWarning", true);
+                                        handleSubmit(onSubmit)();
+                                    }}
+                                    className="flex-1 bg-amber-600 hover:bg-amber-500 text-white shadow-[0_0_15px_rgba(217,119,6,0.4)]"
+                                >
+                                    {isSubmitting ? "Forgeage..." : "Valider quand même"}
+                                </Button>
+                            </>
                         ) : (
-                            <Button
-                                type="button"
-                                onClick={handleSubmit(onSubmit)}
-                                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]"
-                            >
-                                {t("actions.submit")}
-                            </Button>
+                            /* SI PAS D'ALERTE : Boutons normaux */
+                            <>
+                                {/* Le bouton Retour n'existe que si on a passé l'étape 1 */}
+                                {currentStep > 1 && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={prevStep}
+                                        className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
+                                    >
+                                        {tReg("actions.back")}
+                                    </Button>
+                                )}
+
+                                {/* Le bouton Suivant ou Soumettre */}
+                                {currentStep < TOTAL_STEPS ? (
+                                    <Button
+                                        type="button"
+                                        onClick={nextStep}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white"
+                                    >
+                                        {tReg("actions.next")}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        type="button"
+                                        onClick={handleSubmit(onSubmit)}
+                                        disabled={isSubmitting}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isSubmitting ? "Forgeage..." : tReg("actions.submit")}
+                                    </Button>
+                                )}
+                            </>
                         )}
                     </div>
 
-                    <div className="text-center text-sm mt-2">
-                        <Link href="/login" className="text-slate-400 hover:text-white transition-colors">
-                            {t("alreadyHaveAccount")}
-                        </Link>
-                    </div>
+                    {!hasCertifiedWarning && (
+                        <div className="text-center text-sm mt-2">
+                            <Link href="/login" className="text-slate-400 hover:text-white transition-colors">
+                                {tReg("alreadyHaveAccount")}
+                            </Link>
+                        </div>
+                    )}
                 </CardFooter>
             </Card>
         </div>
