@@ -34,7 +34,8 @@
       "foundations": "Fondations",
       "membraneColor": "Signature Visuelle"
     },
-    "emailLabel": "Email de synchronisation",
+    "stepProgress": "Étape {current} sur {total}",
+    "emailLabel": "Adresse Email",
     "emailPlaceholder": "votre@email.com",
     "nameLabel": "Nom de la Membrane",
     "namePlaceholder": "Entrez votre nom",
@@ -43,8 +44,9 @@
     "digitPlaceholder": "0-9",
     "letterLabel": "Lettre",
     "letterPlaceholder": "A-Z",
-    "irreversibleWarning": "Attention : Le choix du Chiffre et de la Lettre est strictement irréversible.",
+    "irreversibleWarning": "Attention : Le choix de votre Chiffre et Lettre est strictement irréversible.",
     "colorLabel": "Signature visuelle de la Membrane",
+    "colorSubtitle": "Sélectionnez l'Aura de votre identité",
     "colors": {
       "singularity": "Singularité",
       "plasma": "Plasma",

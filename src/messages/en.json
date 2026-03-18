@@ -34,7 +34,8 @@
       "foundations": "Foundations",
       "membraneColor": "Visual Signature"
     },
-    "emailLabel": "Synchronization Email",
+    "stepProgress": "Step {current} of {total}",
+    "emailLabel": "Email Address",
     "emailPlaceholder": "your@email.com",
     "nameLabel": "Membrane Name",
     "namePlaceholder": "Enter your name",
@@ -43,8 +44,9 @@
     "digitPlaceholder": "0-9",
     "letterLabel": "Letter",
     "letterPlaceholder": "A-Z",
-    "irreversibleWarning": "Warning: The choice of Digit and Letter is strictly irreversible.",
+    "irreversibleWarning": "Warning: The choice of your Digit and Letter is strictly irreversible.",
     "colorLabel": "Visual Signature of the Membrane",
+    "colorSubtitle": "Select the Aura of your identity",
     "colors": {
       "singularity": "Singularity",
       "plasma": "Plasma",
