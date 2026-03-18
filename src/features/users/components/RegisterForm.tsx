@@ -220,6 +220,9 @@ export function RegisterForm() {
                             <p className="text-sm text-amber-500/90 text-center font-medium leading-relaxed">
                                 {tError("USER.CERTIFIED_NAME_WARNING")}
                             </p>
+                            <p className="text-sm text-amber-500/90 text-center font-medium leading-relaxed">
+                                {tError("USER.CERTIFIED_NAME_VALIDATE_QUESTION")}
+                            </p>
                         </div>
                     )}
 
@@ -237,7 +240,7 @@ export function RegisterForm() {
                                     }}
                                     className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
                                 >
-                                    Modifier le nom
+                                    {tReg("actions.modify_name")}
                                 </Button>
                                 <Button
                                     type="button"
@@ -249,7 +252,7 @@ export function RegisterForm() {
                                     }}
                                     className="flex-1 bg-amber-600 hover:bg-amber-500 text-white shadow-[0_0_15px_rgba(217,119,6,0.4)]"
                                 >
-                                    {isSubmitting ? "Forgeage..." : "Valider quand même"}
+                                    {isSubmitting ? tReg("actions.submitting") : tReg("actions.validate_name")}
                                 </Button>
                             </>
                         ) : (
@@ -283,7 +286,7 @@ export function RegisterForm() {
                                         disabled={isSubmitting}
                                         className="flex-1 bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {isSubmitting ? "Forgeage..." : tReg("actions.submit")}
+                                        {isSubmitting ? tReg("actions.submitting") : tReg("actions.submit")}
                                     </Button>
                                 )}
                             </>
