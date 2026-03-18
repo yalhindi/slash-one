@@ -2,17 +2,18 @@ import fr from "@/messages/fr.json";
 import en from "@/messages/en.json";
 
 // Pour l'instant, on force le dictionnaire français
-// (on pourra plus tard le rendre dynamique en lisant le localStorage ou le navigateur du client).
+// (on pourra plus tard le rendre dynamique en lisant le localStorage ou le navigateur du client
+// ou en donnant le choix de changer la langue à l'utilisateur).
 const currentDictionary = fr;
 
-export function useTranslations(namespace: keyof typeof currentDictionary) {
+export function useTranslations(namespace?: keyof typeof currentDictionary) {
 
     // Cette fonction va lire des clés comme "actions.next" ou "title".
-    return function t(path: string): string {
+    return function t(path: string, options?: Record<string, string | number>): string {
         const keys = path.split('.'); // Sépare "actions.next" en ["actions", "next"]
 
-        // On part du bloc sélectionné (ex: "Register")
-        let result: unknown = currentDictionary[namespace];
+        // Si on a un namespace, on part de lui (ex: "Register"). Sinon, on part de la racine globale !
+        let result: unknown = namespace ? currentDictionary[namespace] : currentDictionary;
 
         // On parcourt l'objet JSON en profondeur
         for (const key of keys) {
@@ -27,6 +28,15 @@ export function useTranslations(namespace: keyof typeof currentDictionary) {
         }
 
         // On s'assure de bien renvoyer un string à la fin
-        return typeof result === 'string' ? result : path;
+        let text = typeof result === 'string' ? result : path;
+
+        // Si on a passé des variables, on les remplace dans le texte !
+        if (options) {
+            Object.entries(options).forEach(([key, value]) => {
+                text = text.replace(new RegExp(`{${key}}`, 'g'), String(value));
+            });
+        }
+
+        return text;
     };
 }
