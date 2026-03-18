@@ -36,7 +36,7 @@ export function StepEmail() {
 
                 {/* On utilise tError pour traduire le message brut renvoyé par Zod ! */}
                 {errors.email?.message && (
-                    <p className="text-sm text-red-500 font-medium">
+                    <p className="text-center text-sm text-red-500 font-medium">
                         {tError(String(errors.email.message))}
                     </p>
                 )}

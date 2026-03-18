@@ -35,7 +35,7 @@ export function StepUsername() {
 
                 {/* L'affichage réactif de l'erreur */}
                 {errors.username?.message && (
-                    <p className="text-sm text-red-500 font-medium">
+                    <p className="text-center text-sm text-red-500 font-medium">
                         {tError(String(errors.username.message))}
                     </p>
                 )}
