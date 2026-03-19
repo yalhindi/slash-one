@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "@/hooks/use-translations";
 import Link from "next/link";
+import Image from "next/image";
 import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -183,11 +184,17 @@ export function RegisterForm() {
                 style={getBackgroundStyle()}
             />
 
-            <Card className="z-10 w-full max-w-md bg-slate-950/70 backdrop-blur-2xl border-white/10 shadow-2xl">
+            <Card className="z-10 w-full max-w-md bg-slate-900/80 backdrop-blur-2xl border-white/10 shadow-2xl animate-in fade-in zoom-in duration-500">
                 <CardHeader className="text-center space-y-2">
-                    <div className="mx-auto w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(37,99,235,0.5)]">
-                        <span className="text-white font-bold text-xl">S</span>
-                    </div>
+                    {/* ---  LOGO Slash --- */}
+                    <Image
+                        src="/slash-logo.png"
+                        alt="Slash Logo"
+                        width={64}
+                        height={64}
+                        priority    // Charge cette image immédiatement (car elle est en haut de page)
+                        className="mx-auto mb-3 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)]" // Centré, marge, et ombre portée légère
+                    />
                     <CardTitle className="text-2xl font-bold tracking-tight text-white">{tReg("title")}</CardTitle>
                     <CardDescription className="text-slate-400">{tReg("subtitle")}</CardDescription>
                     <div className="text-xs text-blue-400 font-medium tracking-widest uppercase pt-2 transition-all">
@@ -264,7 +271,7 @@ export function RegisterForm() {
                                         type="button"
                                         variant="outline"
                                         onClick={prevStep}
-                                        className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
+                                       className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
                                     >
                                         {tReg("actions.back")}
                                     </Button>
@@ -275,7 +282,7 @@ export function RegisterForm() {
                                     <Button
                                         type="button"
                                         onClick={nextStep}
-                                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white"
+                                        className="flex-1 bg-blue-700 hover:bg-blue-600 text-white"
                                     >
                                         {tReg("actions.next")}
                                     </Button>
@@ -284,7 +291,7 @@ export function RegisterForm() {
                                         type="button"
                                         onClick={handleSubmit(onSubmit)}
                                         disabled={isSubmitting}
-                                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="flex-1 bg-blue-700 hover:bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? tReg("actions.submitting") : tReg("actions.submit")}
                                     </Button>
