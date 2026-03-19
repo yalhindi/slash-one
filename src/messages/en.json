@@ -7,7 +7,7 @@
   "USER": {
     "NOT_FOUND": "User not found.",
     "EMAIL_EXISTS": "This email is already linked to an account.",
-    "CERTIFIED_NAME_WARNING": "This name is already used and operated as a brand by a public figure.",
+    "CERTIFIED_NAME_WARNING": "The name you have chosen is already used and operated as a brand by a public figure.",
     "CERTIFIED_NAME_VALIDATE_QUESTION": "Do you still wish to validate your choice?",
     "SLSH_ID_GENERATION_FAILED": "An error occurred while generating your SLSH ID. Please try again.",
     "ACCOUNT_BANNED": "Your account has been banned.",
@@ -29,7 +29,7 @@
   },
   "Register": {
     "title": "Account Creation",
-    "subtitle": "Please configure the fundamental parameters of your Digital Identity.",
+    "subtitle": "Please configure the fundamental parameters of your digital Slash identity.",
     "steps": {
       "email": "Contact",
       "name": "Identity",

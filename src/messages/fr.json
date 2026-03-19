@@ -7,7 +7,7 @@
   "USER": {
     "NOT_FOUND": "Utilisateur introuvable.",
     "EMAIL_EXISTS": "Cet email est déjà associé à un compte.",
-    "CERTIFIED_NAME_WARNING": "Le nom {name} est déjà utilisé et exploité comme image de marque par une personnalité publique.",
+    "CERTIFIED_NAME_WARNING": "Le nom que vous avez choisi est déjà utilisé et exploité comme image de marque par une personnalité publique.",
     "CERTIFIED_NAME_VALIDATE_QUESTION": "Souhaitez-vous toujours valider votre choix ?",
     "SLSH_ID_GENERATION_FAILED": "Un problème est survenu lors de la génération de votre SLSH ID. Veuillez réessayer.",
     "ACCOUNT_BANNED": "Votre compte a été banni.",
@@ -29,7 +29,7 @@
   },
   "Register": {
     "title": "Création de compte",
-    "subtitle": "Veuillez configurer les paramètres fondamentaux de votre identité numérique.",
+    "subtitle": "Veuillez configurer les paramètres fondamentaux de votre identité numérique Slash.",
     "steps": {
       "email": "Contact",
       "name": "Identité",
