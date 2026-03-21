@@ -4,8 +4,11 @@ import Nodemailer from "next-auth/providers/nodemailer"
 import { prisma } from "@/lib/prisma"
 import { randomInt } from "crypto"
 import {UserService} from "@/features/users/user.service";
-import { createTransport } from "nodemailer";
 import {OtpService} from "@/features/auth/otp.service";
+import { UserRepository } from "@/features/users/user.repository"
+import { createTransport } from "nodemailer";
+import Credentials from "next-auth/providers/credentials"
+import {NotFoundError} from "@/core/errors/NotFoundError";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
@@ -49,9 +52,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     text: `Votre code d'accès est : ${token}`, // Version texte brut (fallback)
                     html: `
                         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; border-radius: 10px;">
-                          <h1 style="color: #111827; text-align: center;">Initialisation de la Membrane</h1>
+                          <h1 style="color: #111827; text-align: center;">Votre code de vérification de connexion</h1>
                           <p style="color: #4b5563; font-size: 16px; text-align: center;">
-                            Bienvenue sur le MegaHub. Voici votre code de sécurité unique pour autoriser l'accès :
+                            Pour sécuriser votre connexion à votre Espace Slash, voici votre code de vérification :
                           </p>
                           <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; border: 1px solid #e5e7eb;">
                             <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #4f46e5;">
@@ -67,10 +70,45 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 const failed = result.rejected.concat(result.pending).filter(Boolean)
                 if (failed.length) {
-                    throw new Error(`Impossible d'envoyer l'email à (${failed.join(", ")})`)
+                    throw new Error(`Impossible d'envoyer l'email à (${failed.join(", ")})`) // add this to en/fr.json
                 }
             },
         }),
+
+        // Le provider pour la VÉRIFICATION manuelle
+        Credentials({
+            id: "credentials",
+            name: "OTP",
+            credentials: {
+                email: { label: "Email", type: "email" },
+                code: { label: "Code", type: "text" }
+            },
+            async authorize(credentials) {
+                const email = credentials?.email as string;
+                const code = credentials?.code as string;
+
+                if (!email || !code) {
+                    throw new Error("AUTH.MISSING_CREDENTIALS");
+                }
+
+                // Validation de l'OTP
+                await OtpService.consumeOtp(email, code);
+
+                // Récupération de l'utilisateur
+                const user = await UserRepository.findByEmail(email);
+
+                if (!user) {
+                    throw new NotFoundError("USER.NOT_FOUND");
+                }
+
+                // On met à jour la base si c'est nécessaire (la toute première fois).
+                if (!user.emailVerified) {
+                    await UserService.markEmailAsVerified(email);
+                }
+
+                return user;
+            }
+        })
     ],
     callbacks: {
         // Cette fonction est le "Videur" : elle s'exécute quand quelqu'un essaie de se connecter

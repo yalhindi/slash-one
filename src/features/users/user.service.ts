@@ -125,6 +125,12 @@ export class UserService {
         return await UserRepository.updateById(id, prismaData)
     }
 
+    // Marquer un email comme "vérifié" en mettant à jour sa date de vérification
+    static async markEmailAsVerified(email: string) {
+        const verificationDate = new Date();
+        await UserRepository.updateEmailVerificationDate(email, verificationDate);
+    }
+
     // ==========================================
     // SUPPRESSION
     // ==========================================

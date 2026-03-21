@@ -10,4 +10,18 @@ export class OtpRepository {
             }
         })
     }
+
+    // Récupérer un token précis
+    static async findToken(identifier: string, token: string) {
+        return prisma.verificationToken.findFirst({
+            where: { identifier, token }
+        })
+    }
+
+    // Supprimer un token (après utilisation ou expiration)
+    static async deleteToken(identifier: string, token: string) {
+        return prisma.verificationToken.deleteMany({
+            where: { identifier, token }
+        })
+    }
 }

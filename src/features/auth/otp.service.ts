@@ -14,4 +14,24 @@ export class OtpService {
         // Nettoyage de sécurité : on invalide les anciens codes
         await OtpRepository.deletePreviousTokens(email, currentToken)
     }
+
+    // Méthode de vérification
+    static async consumeOtp(email: string, code: string) {
+        const verificationToken = await OtpRepository.findToken(email, code);
+
+        if (!verificationToken) {
+            throw new Error("AUTH.INVALID_OTP");
+        }
+
+        // Vérification de l'expiration
+        if (verificationToken.expires < new Date()) {
+            await OtpRepository.deleteToken(email, code); // On nettoie
+            throw new Error("AUTH.EXPIRED_OTP");
+        }
+
+        // Le code est bon, on le détruit pour qu'il soit à usage unique
+        await OtpRepository.deleteToken(email, code);
+
+        return true;
+    }
 }

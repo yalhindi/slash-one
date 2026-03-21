@@ -129,6 +129,14 @@ export class UserRepository {
         })
     }
 
+    // Met à jour la date de vérification de l'email
+    static async updateEmailVerificationDate(email: string, date: Date) {
+        return prisma.user.update({
+            where: { email },
+            data: { emailVerified: date }
+        });
+    }
+
     /**
      * Soft Delete
      */
