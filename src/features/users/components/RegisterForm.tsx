@@ -120,7 +120,7 @@ export function RegisterForm() {
                     }
                 }
 
-                // Pour TOUTES les autres erreurs (409 Génération, 500, etc.)
+                // Pour TOUTES les autres erreurs (500, etc.)
                 // On utilise la clé du back, on la traduit, et on utilise 'return' pour stopper la fonction.
                 const fallbackError = result.error || "API.INTERNAL_SERVER_ERROR";
                 toast.error(tError(fallbackError));
@@ -134,7 +134,7 @@ export function RegisterForm() {
             });
 
             if (signInResult?.error) {
-                toast.error(tError("API.AUTH_SEND_FAILED"));
+                toast.error(tError("AUTH.SEND_FAILED"));
                 return;
             }
 
@@ -149,24 +149,29 @@ export function RegisterForm() {
         }
     };
 
-    // Le fond dynamique (Bleu nuit par défaut, puis Aura spécifique à l'étape 4)
+    // Le fond dynamique (Aura spécifique à l'étape 4)
     const getBackgroundStyle = () => {
+        // Si on n'est pas à la dernière étape ou sans couleur, on coupe l'Aura
         if (currentStep < 4 || !selectedColor) {
             return {
-                backgroundImage: 'linear-gradient(to bottom right, #020617, #082f49, #020617)',
-                opacity: 1
+                backgroundImage: 'none',
+                opacity: 0
             };
         }
 
         let gradient = "";
         if (selectedColor === "SINGULARITY") {
-            gradient = "radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.25) 0%, rgba(88, 28, 135, 0.5) 50%, #020617 100%)";
+            // Violet Profond -> Violet Néon
+            gradient = "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.45) 0%, rgba(168, 85, 247, 0.20) 40%)";
         } else if (selectedColor === "PLASMA") {
-            gradient = "radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.25) 0%, rgba(159, 18, 57, 0.5) 50%, #020617 100%)";
+            // Magenta -> Rose Électrique
+            gradient = "radial-gradient(circle at 50% 50%, rgba(219, 39, 119, 0.40) 0%, rgba(236, 72, 153, 0.18) 40%)";
         } else if (selectedColor === "BOREAL") {
-            gradient = "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.2) 0%, rgba(30, 58, 138, 0.5) 50%, #020617 100%)";
+            // Bleu Nuit -> Émeraude Éclatant
+            gradient = "radial-gradient(circle at 50% 50%, rgba(10, 110, 80, 0.40) 0%, rgba(16, 185, 129, 0.15) 40%)";
         } else if (selectedColor === "FUSION") {
-            gradient = "radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.25) 0%, rgba(153, 27, 27, 0.5) 50%, #020617 100%)";
+            // Cuivré Profond  -> Orange Intense
+            gradient = "radial-gradient(circle at 50% 50%, rgba(184, 80, 20, 0.45) 0%, rgba(249, 115, 22, 0.20) 40%)";
         }
 
         return {
@@ -176,139 +181,144 @@ export function RegisterForm() {
     };
 
     return (
-        <div className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden">
+        <div className="relative w-full flex justify-center">
 
-            {/* Le Halo subtil en arrière-plan */}
+            {/* L'Aura dynamique en position 'fixed'
+                Elle couvre l'écran entier et passe derrière le formulaire (z-0)
+            */}
             <div
-                className="absolute inset-0 z-0 transition-all duration-1000 ease-in-out pointer-events-none"
+                className="fixed inset-0 z-0 transition-opacity duration-1000 ease-in-out pointer-events-none"
                 style={getBackgroundStyle()}
             />
 
-            <Card className="z-10 w-full max-w-md bg-slate-900/80 backdrop-blur-2xl border-white/10 shadow-2xl animate-in fade-in zoom-in duration-500">
-                <CardHeader className="text-center space-y-2">
-                    {/* ---  LOGO Slash --- */}
-                    <Image
-                        src="/slash-logo.png"
-                        alt="Slash Logo"
-                        width={64}
-                        height={64}
-                        priority    // Charge cette image immédiatement (car elle est en haut de page)
-                        className="mx-auto mb-3 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)]" // Centré, marge, et ombre portée légère
-                    />
-                    <CardTitle className="text-2xl font-bold tracking-tight text-white">{tReg("title")}</CardTitle>
-                    <CardDescription className="text-slate-400">{tReg("subtitle")}</CardDescription>
-                    <div className="text-xs text-blue-400 font-medium tracking-widest uppercase pt-2 transition-all">
-                        {tReg("stepProgress", { current: currentStep, total: TOTAL_STEPS })}
-                    </div>
-                </CardHeader>
-
-                <CardContent>
-                    {/* FormProvider partage la mémoire aux enfants */}
-                    <FormProvider {...methods}>
-                        <form
-                            onSubmit={handleSubmit(onSubmit)}
-                            // On bloque le comportement du navigateur par défaut de soumettre la totalité du formulaire instantanément
-                            // si on appuie sur la touche "Enter".
-                            onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
-                            className="py-4 min-h-[120px] relative"
-                        >
-                            {currentStep === 1 && <StepEmail />}
-                            {currentStep === 2 && <StepUsername />}
-                            {currentStep === 3 && <StepFoundations />}
-                            {currentStep === 4 && <StepMembraneColor />}
-                        </form>
-                    </FormProvider>
-                </CardContent>
-
-                <CardFooter className="flex flex-col space-y-4">
-                    {/* --- ZONE D'ALERTE : NOM CERTIFIÉ --- */}
-                    {hasCertifiedWarning && (
-                        <div className="w-full p-4 mb-2 bg-amber-500/10 border border-amber-500/30 rounded-lg animate-in fade-in zoom-in duration-300">
-                            <p className="text-sm text-amber-500/90 text-center font-medium leading-relaxed">
-                                {tError("USER.CERTIFIED_NAME_WARNING")}
-                            </p>
-                            <p className="text-sm text-amber-500/90 text-center font-medium leading-relaxed">
-                                {tError("USER.CERTIFIED_NAME_VALIDATE_QUESTION")}
-                            </p>
+            {/* La Carte du Formulaire (z-10 pour passer au-dessus de l'Aura) */}
+            <div className="z-10 w-full max-w-md">
+                <Card className="bg-slate-900/80 backdrop-blur-2xl border-white/10 shadow-2xl animate-in fade-in zoom-in duration-500">
+                    <CardHeader className="text-center space-y-2">
+                        {/* ---  LOGO Slash --- */}
+                        <Image
+                            src="/slash-logo.png"
+                            alt="Slash Logo"
+                            width={64}
+                            height={64}
+                            priority    // Charge cette image immédiatement (car elle est en haut de page)
+                            className="mx-auto mb-3 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)]" // Centré, marge, et ombre portée légère
+                        />
+                        <CardTitle className="text-2xl font-bold tracking-tight text-white">{tReg("title")}</CardTitle>
+                        <CardDescription className="text-slate-400">{tReg("subtitle")}</CardDescription>
+                        <div className="text-xs text-blue-400 font-medium tracking-widest uppercase pt-2 transition-all">
+                            {tReg("stepProgress", { current: currentStep, total: TOTAL_STEPS })}
                         </div>
-                    )}
+                    </CardHeader>
 
-                    <div className="flex w-full gap-4 mt-2">
-                        {/* SI L'ALERTE EST AFFICHÉE : Boutons spécifiques */}
-                        {hasCertifiedWarning ? (
-                            <>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    // S'il refuse, on le renvoie à l'étape 2 et on cache l'alerte
-                                    onClick={() => {
-                                        setHasCertifiedWarning(false);
-                                        setCurrentStep(2);
-                                    }}
-                                    className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
-                                >
-                                    {tReg("actions.modify_name")}
-                                </Button>
-                                <Button
-                                    type="button"
-                                    disabled={isSubmitting}
-                                    onClick={() => {
-                                        // S'il valide, on met le bypass à true, et on relance la soumission !
-                                        methods.setValue("bypassCertifiedWarning", true);
-                                        handleSubmit(onSubmit)();
-                                    }}
-                                    className="flex-1 bg-amber-600 hover:bg-amber-500 text-white shadow-[0_0_15px_rgba(217,119,6,0.4)]"
-                                >
-                                    {isSubmitting ? tReg("actions.submitting") : tReg("actions.validate_name")}
-                                </Button>
-                            </>
-                        ) : (
-                            /* SI PAS D'ALERTE : Boutons normaux */
-                            <>
-                                {/* Le bouton Retour n'existe que si on a passé l'étape 1 */}
-                                {currentStep > 1 && (
+                    <CardContent>
+                        {/* FormProvider partage la mémoire aux enfants */}
+                        <FormProvider {...methods}>
+                            <form
+                                onSubmit={handleSubmit(onSubmit)}
+                                // On bloque le comportement du navigateur par défaut de soumettre la totalité du formulaire instantanément
+                                // si on appuie sur la touche "Enter".
+                                onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
+                                className="py-4 min-h-[120px] relative"
+                            >
+                                {currentStep === 1 && <StepEmail />}
+                                {currentStep === 2 && <StepUsername />}
+                                {currentStep === 3 && <StepFoundations />}
+                                {currentStep === 4 && <StepMembraneColor />}
+                            </form>
+                        </FormProvider>
+                    </CardContent>
+
+                    <CardFooter className="flex flex-col space-y-4">
+                        {/* --- ZONE D'ALERTE : NOM CERTIFIÉ --- */}
+                        {hasCertifiedWarning && (
+                            <div className="w-full p-4 mb-2 bg-amber-500/10 border border-amber-500/30 rounded-lg animate-in fade-in zoom-in duration-300">
+                                <p className="text-sm text-amber-500/90 text-center font-medium leading-relaxed">
+                                    {tError("USER.CERTIFIED_NAME_WARNING")}
+                                </p>
+                                <p className="text-sm text-amber-500/90 text-center font-medium leading-relaxed">
+                                    {tError("USER.CERTIFIED_NAME_VALIDATE_QUESTION")}
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="flex w-full gap-4 mt-2">
+                            {/* SI L'ALERTE EST AFFICHÉE : Boutons spécifiques */}
+                            {hasCertifiedWarning ? (
+                                <>
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={prevStep}
-                                       className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
+                                        // S'il refuse, on le renvoie à l'étape 2 et on cache l'alerte
+                                        onClick={() => {
+                                            setHasCertifiedWarning(false);
+                                            setCurrentStep(2);
+                                        }}
+                                        className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
                                     >
-                                        {tReg("actions.back")}
+                                        {tReg("actions.modify_name")}
                                     </Button>
-                                )}
-
-                                {/* Le bouton Suivant ou Soumettre */}
-                                {currentStep < TOTAL_STEPS ? (
                                     <Button
                                         type="button"
-                                        onClick={nextStep}
-                                        className="flex-1 bg-blue-700 hover:bg-blue-600 text-white"
-                                    >
-                                        {tReg("actions.next")}
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        type="button"
-                                        onClick={handleSubmit(onSubmit)}
                                         disabled={isSubmitting}
-                                        className="flex-1 bg-blue-700 hover:bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                        onClick={() => {
+                                            // S'il valide, on met le bypass à true, et on relance la soumission !
+                                            methods.setValue("bypassCertifiedWarning", true);
+                                            handleSubmit(onSubmit)();
+                                        }}
+                                        className="flex-1 bg-amber-600 hover:bg-amber-500 text-white shadow-[0_0_15px_rgba(217,119,6,0.4)]"
                                     >
-                                        {isSubmitting ? tReg("actions.submitting") : tReg("actions.submit")}
+                                        {isSubmitting ? tReg("actions.submitting") : tReg("actions.validate_name")}
                                     </Button>
-                                )}
-                            </>
-                        )}
-                    </div>
+                                </>
+                            ) : (
+                                /* SI PAS D'ALERTE : Boutons normaux */
+                                <>
+                                    {/* Le bouton Retour n'existe que si on a passé l'étape 1 */}
+                                    {currentStep > 1 && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={prevStep}
+                                           className="flex-1 bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white"
+                                        >
+                                            {tReg("actions.back")}
+                                        </Button>
+                                    )}
 
-                    {!hasCertifiedWarning && (
-                        <div className="text-center text-sm mt-2">
-                            <Link href="/login" className="text-slate-400 hover:text-white transition-colors">
-                                {tReg("alreadyHaveAccount")}
-                            </Link>
+                                    {/* Le bouton Suivant ou Soumettre */}
+                                    {currentStep < TOTAL_STEPS ? (
+                                        <Button
+                                            type="button"
+                                            onClick={nextStep}
+                                            className="flex-1 bg-blue-700 hover:bg-blue-600 text-white"
+                                        >
+                                            {tReg("actions.next")}
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            type="button"
+                                            onClick={handleSubmit(onSubmit)}
+                                            disabled={isSubmitting}
+                                            className="flex-1 bg-blue-700 hover:bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {isSubmitting ? tReg("actions.submitting") : tReg("actions.submit")}
+                                        </Button>
+                                    )}
+                                </>
+                            )}
                         </div>
-                    )}
-                </CardFooter>
-            </Card>
+
+                        {!hasCertifiedWarning && (
+                            <div className="text-center text-sm mt-2">
+                                <Link href="/login" className="text-slate-400 hover:text-white transition-colors">
+                                    {tReg("alreadyHaveAccount")}
+                                </Link>
+                            </div>
+                        )}
+                    </CardFooter>
+                </Card>
+            </div>
         </div>
     );
 }
