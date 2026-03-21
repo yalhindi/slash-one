@@ -11,4 +11,6 @@ export const REGEX = {
     // Format International E.164 (ex: +33123456789)
     PHONE_NUMBER: /^\+[1-9]\d{1,14}$/,
 
+    ONLY_DIGITS: /^\d+$/
+
 }
