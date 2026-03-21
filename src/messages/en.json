@@ -1,8 +1,13 @@
 {
   "API": {
     "INTERNAL_SERVER_ERROR": "An unexpected Slash server error occurred. Please try again later.",
-    "VALIDATION_FAILED": "Some information is invalid. Please check the form.",
-    "AUTH_SEND_FAILED": "Failed to send the security code. Please try again."
+    "VALIDATION_FAILED": "Some information is invalid. Please check the form."
+  },
+  "AUTH": {
+    "SEND_FAILED": "Failed to send the security code. Please try again.",
+    "INVALID_OTP": "Invalid security code.",
+    "EXPIRED_OTP": "This code has expired. Please request a new one.",
+    "MISSING_CREDENTIALS": "Email or security code is missing."
   },
   "USER": {
     "NOT_FOUND": "User not found.",
