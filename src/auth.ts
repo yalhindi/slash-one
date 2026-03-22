@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma"
 import { randomInt } from "crypto"
 import {UserService} from "@/features/users/user.service";
 import {OtpService} from "@/features/auth/otp.service";
-import { UserRepository } from "@/features/users/user.repository"
 import { createTransport } from "nodemailer";
 import Credentials from "next-auth/providers/credentials"
 import {NotFoundError} from "@/core/errors/NotFoundError";
@@ -99,7 +98,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 await OtpService.consumeOtp(email, code);
 
                 // Récupération de l'utilisateur
-                const user = await UserRepository.findByEmail(email);
+                const user = await UserService.getUserByEmail(email);
 
                 if (!user) {
                     throw new NotFoundError("USER.NOT_FOUND");
