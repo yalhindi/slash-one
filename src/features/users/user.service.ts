@@ -101,6 +101,10 @@ export class UserService {
         return user
     }
 
+    static async getUserByEmail(email: string) {
+        return UserRepository.findByEmail(email);
+    }
+
     static async getUsersByRole(role: Role) {
         return await UserRepository.findByRole(role)
     }
