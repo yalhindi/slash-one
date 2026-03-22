@@ -1,5 +1,6 @@
 import { OtpRepository } from "./otp.repository"
 import {UnauthorizedError} from "@/core/errors/UnauthorizedError";
+import {CryptoUtils} from "@/utils/crypto";
 
 export class OtpService {
     static async secureOtpRotation(email: string, currentToken: string): Promise<void> {
@@ -18,7 +19,12 @@ export class OtpService {
 
     // Méthode de vérification
     static async consumeOtp(email: string, code: string) {
-        const verificationToken = await OtpRepository.findToken(email, code);
+
+        // On crypte le code reçu du frontend
+        const hashedCode = CryptoUtils.hashAuthToken(code);
+
+        // On cherche le token haché dans la base !
+        const verificationToken = await OtpRepository.findToken(email, hashedCode);
 
         if (!verificationToken) {
             throw new UnauthorizedError("AUTH.INVALID_OTP");
@@ -26,12 +32,12 @@ export class OtpService {
 
         // Vérification de l'expiration
         if (verificationToken.expires < new Date()) {
-            await OtpRepository.deleteToken(email, code); // On nettoie
+            await OtpRepository.deleteToken(email, hashedCode); // On nettoie
             throw new UnauthorizedError("AUTH.EXPIRED_OTP");
         }
 
         // Le code est bon, on le détruit pour qu'il soit à usage unique
-        await OtpRepository.deleteToken(email, code);
+        await OtpRepository.deleteToken(email, hashedCode);
 
         return true;
     }
