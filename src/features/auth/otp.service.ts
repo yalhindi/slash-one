@@ -1,4 +1,5 @@
 import { OtpRepository } from "./otp.repository"
+import {UnauthorizedError} from "@/core/errors/UnauthorizedError";
 
 export class OtpService {
     static async secureOtpRotation(email: string, currentToken: string): Promise<void> {
@@ -20,13 +21,13 @@ export class OtpService {
         const verificationToken = await OtpRepository.findToken(email, code);
 
         if (!verificationToken) {
-            throw new Error("AUTH.INVALID_OTP");
+            throw new UnauthorizedError("AUTH.INVALID_OTP");
         }
 
         // Vérification de l'expiration
         if (verificationToken.expires < new Date()) {
             await OtpRepository.deleteToken(email, code); // On nettoie
-            throw new Error("AUTH.EXPIRED_OTP");
+            throw new UnauthorizedError("AUTH.EXPIRED_OTP");
         }
 
         // Le code est bon, on le détruit pour qu'il soit à usage unique

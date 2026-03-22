@@ -9,6 +9,7 @@ import { UserRepository } from "@/features/users/user.repository"
 import { createTransport } from "nodemailer";
 import Credentials from "next-auth/providers/credentials"
 import {NotFoundError} from "@/core/errors/NotFoundError";
+import {InternalServerError} from "@/core/errors/InternalServerError";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
@@ -73,7 +74,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 const failed = result.rejected.concat(result.pending).filter(Boolean)
                 if (failed.length) {
-                    throw new Error("AUTH.SEND_FAILED")
+                    throw new InternalServerError("AUTH.SEND_FAILED")
                 }
             },
         }),

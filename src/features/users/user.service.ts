@@ -3,6 +3,7 @@ import { CreateUserInput, UpdateUserInput } from './user.schema'
 import { Prisma, Role } from '@prisma/client'
 import { ConflictError } from '@/core/errors/ConflictError'
 import { NotFoundError } from '@/core/errors/NotFoundError'
+import {ForbiddenError} from "@/core/errors/ForbiddenError";
 import crypto from 'crypto'
 
 export class UserService {
@@ -157,15 +158,15 @@ export class UserService {
         const status = await UserRepository.getAccountStatus(email)
 
         if (!status) {
-            throw new Error("USER.NOT_FOUND")
+            throw new NotFoundError("USER.NOT_FOUND")
         }
 
         if (status === 'BANNED') {
-            throw new Error("USER.ACCOUNT_BANNED")
+            throw new ForbiddenError("USER.ACCOUNT_BANNED")
         }
 
         if (status === 'SUSPENDED') {
-            throw new Error("USER.ACCOUNT_SUSPENDED")
+            throw new ForbiddenError("USER.ACCOUNT_SUSPENDED")
         }
 
         // Si on arrive ici, le statut est 'ACTIVE'
