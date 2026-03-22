@@ -102,11 +102,19 @@ export class UserService {
     }
 
     static async getUserByEmail(email: string) {
-        return UserRepository.findByEmail(email);
+        const user = await UserRepository.findByEmail(email)
+        if (!user) {
+            throw new NotFoundError("USER.NOT_FOUND")
+        }
+        return user
     }
 
     static async getUsersByRole(role: Role) {
-        return await UserRepository.findByRole(role)
+        const user = await UserRepository.findByRole(role)
+        if (!user) {
+            throw new NotFoundError("USER.NOT_FOUND")
+        }
+        return user
     }
 
     // ==========================================
