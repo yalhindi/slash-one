@@ -38,7 +38,9 @@ export function StepFoundations() {
                         maxLength={1} // BLOQUE à 1 seul caractère
                         inputMode="numeric" // FORCE le clavier numérique sur mobile
                         placeholder="0-9"
-                        className="bg-slate-900/80 border-slate-700 text-white text-center text-3xl h-16 font-mono focus-visible:ring-blue-500 placeholder:text-slate-700"
+                        className={`bg-slate-900/80 border-slate-700 text-white text-center text-3xl h-16 font-mono focus-visible:ring-blue-500 placeholder:text-slate-700 ${
+                            digitErrors.chosenDigit ? "border-red-500 focus-visible:ring-red-500" : ""
+                        }`}
                         {...register("chosenDigit")}
                     />
                     {digitErrors.chosenDigit?.message && (
@@ -58,8 +60,9 @@ export function StepFoundations() {
                         maxLength={1} // BLOQUE à 1 seul caractère
                         placeholder="A-Z"
                         // uppercase transforme visuellement la lettre en majuscule instantanément
-                        className="bg-slate-900/80 border-slate-700 text-white text-center text-3xl h-16 font-mono uppercase focus-visible:ring-blue-500 placeholder:text-slate-700"
-                        {...register("chosenLetter")}
+                        className={`bg-slate-900/80 border-slate-700 text-white text-center text-3xl h-16 font-mono focus-visible:ring-blue-500 placeholder:text-slate-700 ${
+                            letterErrors.chosenLetter ? "border-red-500 focus-visible:ring-red-500" : ""
+                        }`}                        {...register("chosenLetter")}
                     />
                     {letterErrors.chosenLetter?.message && (
                         <p className="text-xs text-red-500 font-medium text-center">

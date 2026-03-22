@@ -30,7 +30,9 @@ export function StepEmail() {
                     id="email"
                     type="email"
                     placeholder={t("emailPlaceholder")}
-                    className=" text-center bg-slate-900/50 border-slate-700 text-white focus-visible:ring-blue-500"
+                    className={`text-center bg-slate-900/50 border-slate-700 text-white focus-visible:ring-blue-500 ${
+                        errors.email ? "border-red-500 focus-visible:ring-red-500" : ""
+                    }`}
                     {...register("email")}
                 />
 

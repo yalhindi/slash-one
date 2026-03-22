@@ -26,7 +26,9 @@ export function StepUsername() {
                 <Input
                     id="username"
                     placeholder={t("namePlaceholder")}
-                    className="text-center bg-slate-900/50 border-slate-700 text-white focus-visible:ring-blue-500"
+                    className={`text-center bg-slate-900/50 border-slate-700 text-white focus-visible:ring-blue-500 ${
+                        errors.username ? "border-red-500 focus-visible:ring-red-500" : ""
+                    }`}
                     {...register("username")}
                 />
 
