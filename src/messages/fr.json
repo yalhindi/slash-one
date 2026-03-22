@@ -69,5 +69,20 @@
       "validate_name": "Valider"
     },
     "alreadyHaveAccount": "Compte déjà existant ? Connectez-vous"
-  }
+  },
+  "Otp": {
+    "title": "Autorisation Requise",
+    "description": "Un code de sécurité a été envoyé à l'adresse",
+    "validation": {
+      "length": "Le code doit contenir exactement 6 chiffres."
+    },
+    "success": "Authentification réussie.",
+    "submit": "Authentifier",
+    "submitting": "Vérification...",
+    "resend": "Renvoyer le code",
+    "resending": "Envoi en cours...",
+    "resendSuccess": "Un nouveau code a été envoyé.",
+    "resendError": "Impossible de renvoyer le code. Veuillez réessayer."
+  },
+  "CredentialsSignin": "Code de sécurité invalide ou expiré."
 }

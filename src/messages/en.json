@@ -69,5 +69,20 @@
       "validate_name": "Confirm"
     },
     "alreadyHaveAccount": "Already have an account? Sign in"
-  }
+  },
+  "Otp": {
+    "title": "Authorization Required",
+    "description": "A security code has been sent to the address",
+    "validation": {
+      "length": "The code must contain exactly 6 digits."
+    },
+    "success": "Authentication successful.",
+    "submit": "Authenticate",
+    "submitting": "verifying...",
+    "resend": "Resend code",
+    "resending": "Resending...",
+    "resendSuccess": "A new code has been sent.",
+    "resendError": "Unable to resend the code. Please try again."
+  },
+  "CredentialsSignin": "Invalid or expired security code."
 }
