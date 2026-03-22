@@ -48,21 +48,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 const result = await transport.sendMail({
                     to: identifier,
                     from: provider.from,
-                    subject: `Votre code d'accès Slash : ${token}`,
-                    text: `Votre code d'accès est : ${token}`, // Version texte brut (fallback)
+                    subject: `Slash Code : ${token}`,
+                    text: `Your access code is : ${token}. Valid 10 minutes.`,
                     html: `
                         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; border-radius: 10px;">
-                          <h1 style="color: #111827; text-align: center;">Votre code de vérification de connexion</h1>
+                          <h1 style="color: #111827; text-align: center;">Verification code</h1>
                           <p style="color: #4b5563; font-size: 16px; text-align: center;">
-                            Pour sécuriser votre connexion à votre Espace Slash, voici votre code de vérification :
+                            Use the following code to secure your login : 
                           </p>
-                          <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; border: 1px solid #e5e7eb;">
+                         <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin: 30px 0 10px 0; text-align: center; border: 1px solid #e5e7eb;">
                             <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #4f46e5;">
                               ${token}
                             </span>
                           </div>
+                          <p style="color: #d97706; font-size: 14px; font-weight: bold; text-align: center; margin-top: 0; margin-bottom: 30px;">
+                            Valid for 10 minutes
+                          </p>
                           <p style="color: #6b7280; font-size: 14px; text-align: center;">
-                            Si vous n'avez pas demandé ce code, vous pouvez ignorer cet email en toute sécurité.
+                            If you didn't request this code, you can safely ignore this email.
                           </p>
                         </div>
                       `,
@@ -70,7 +73,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 const failed = result.rejected.concat(result.pending).filter(Boolean)
                 if (failed.length) {
-                    throw new Error(`Impossible d'envoyer l'email à (${failed.join(", ")})`) // add this to en/fr.json
+                    throw new Error("AUTH.SEND_FAILED")
                 }
             },
         }),
