@@ -160,7 +160,7 @@ export function OtpForm({ defaultEmail }: { defaultEmail: string }) {
                         type="button"
                         onClick={handleResend}
                         disabled={isResending || isSubmitting}
-                        className="text-slate-400 hover:text-white transition-colors disabled:opacity-50"
+                        className="text-blue-400 hover:text-blue-300 transition-colors disabled:opacity-50"
                     >
                         {isResending ? t("resending") : t("resend")}
                     </button>
