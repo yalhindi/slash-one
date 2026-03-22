@@ -7,8 +7,8 @@ import {UserService} from "@/features/users/user.service";
 import {OtpService} from "@/features/auth/otp.service";
 import { createTransport } from "nodemailer";
 import Credentials from "next-auth/providers/credentials"
-import {NotFoundError} from "@/core/errors/NotFoundError";
 import {InternalServerError} from "@/core/errors/InternalServerError";
+import {CustomAuthError} from "@/core/errors/CustomAuthError";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
@@ -90,18 +90,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 const email = credentials?.email as string;
                 const code = credentials?.code as string;
 
+                // Vérification locale
                 if (!email || !code) {
-                    throw new Error("AUTH.MISSING_CREDENTIALS");
+                    throw new CustomAuthError("AUTH.MISSING_CREDENTIALS");
                 }
 
-                // Validation de l'OTP
-                await OtpService.consumeOtp(email, code);
+                // Appel au Service Externe :
+                // OtpService jette des UnauthorizedError qu'il faut traduire pour NextAuth.
+                try {
+                    await OtpService.consumeOtp(email, code);
+                } catch (error) {
+                    if (error instanceof Error) {
+                        // On passe notre message d'erreur (ex: "AUTH.INVALID_OTP") à NextAuth
+                        throw new CustomAuthError(error.message);
+                    }
+                    // Fallback de sécurité si l'erreur n'est pas une instance de Error
+                    throw new CustomAuthError("API.INTERNAL_SERVER_ERROR");
+                }
 
-                // Récupération de l'utilisateur
                 const user = await UserService.getUserByEmail(email);
 
+                // On vérifie avant de l'envoyer
                 if (!user) {
-                    throw new NotFoundError("USER.NOT_FOUND");
+                    throw new CustomAuthError("USER.NOT_FOUND");
                 }
 
                 // On met à jour la base si c'est nécessaire (la toute première fois).
