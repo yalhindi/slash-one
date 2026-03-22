@@ -68,7 +68,8 @@
       "modify_name": "Modifier votre nom",
       "validate_name": "Valider"
     },
-    "alreadyHaveAccount": "Compte déjà existant ? Connectez-vous"
+    "alreadyHaveAccountPt1": "Compte déjà existant ? ",
+    "alreadyHaveAccountPt2": "Connectez-vous"
   },
   "Otp": {
     "title": "Autorisation Requise",

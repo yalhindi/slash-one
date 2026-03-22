@@ -311,8 +311,10 @@ export function RegisterForm() {
 
                         {!hasCertifiedWarning && (
                             <div className="text-center text-sm mt-2">
-                                <Link href="/login" className="text-slate-400 hover:text-white transition-colors">
-                                    {tReg("alreadyHaveAccount")}
+                                <span className="text-slate-400">{tReg("alreadyHaveAccountPt1")}</span>
+                                {/* Lien vers la page Login */}
+                                <Link href="/login" className="text-blue-400 hover:text-blue-300 transition-colors">
+                                    {tReg("alreadyHaveAccountPt2")}
                                 </Link>
                             </div>
                         )}

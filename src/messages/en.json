@@ -68,7 +68,8 @@
       "modify_name": "Modify your name",
       "validate_name": "Confirm"
     },
-    "alreadyHaveAccount": "Already have an account? Sign in"
+    "alreadyHaveAccountPt1": "Already have an account? ",
+    "alreadyHaveAccountPt2": "Sign in"
   },
   "Otp": {
     "title": "Authorization Required",
