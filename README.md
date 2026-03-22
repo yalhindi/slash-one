@@ -42,7 +42,7 @@ POSTGRES_DB="local_db"
 DATABASE_URL="postgresql://local_user:local_password@localhost:5432/local_db?schema=public"
 
 # --- 2. Authentification (Auth.js) ---
-NEXTAUTH_URL="http://localhost:3000"
+AUTH_URL="http://localhost:3000"
 # Générez une clé secrète avec : openssl rand -base64 32 ou npx auth secret
 AUTH_SECRET="votre_cle_secrete"
 
