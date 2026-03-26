@@ -30,7 +30,7 @@ export function LoginForm() {
     // Le schéma Zod est encapsulé dans useMemo pour accéder à t() sans re-rendus infinis
     const loginSchema = useMemo(() => z.object({
         email: z.email({ message: tError("VALIDATION.EMAIL_INVALID") }),
-    }), [t]);
+    }), [tError]);
 
     type LoginFormValues = z.infer<typeof loginSchema>;
 
