@@ -5,7 +5,7 @@ import {REGEX} from "@/utils/regex";
 export const createUserSchema = z.object({
     email: z.email("VALIDATION.EMAIL_INVALID").max(255),
 
-    // Règle : Uniquement des lettres (avec accents français inclus), max 14 caractères
+    // Règle : Uniquement des lettres, max 14 caractères
     username: z.string()
         .min(2, "VALIDATION.USERNAME_TOO_SHORT")
         .max(14, "VALIDATION.USERNAME_TOO_LONG")

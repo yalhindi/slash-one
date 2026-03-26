@@ -1,28 +1,103 @@
 {
   "API": {
     "INTERNAL_SERVER_ERROR": "Une erreur inattendue des serveurs Slash s'est produite. Veuillez réessayer plus tard.",
-    "VALIDATION_FAILED": "Certaines informations de votre Membrane sont invalides. Veuillez vérifier le formulaire."
+    "VALIDATION_FAILED": "Certaines informations sont invalides. Veuillez vérifier le formulaire."
+  },
+  "AUTH": {
+    "SEND_FAILED": "Impossible d'envoyer le code de sécurité. Veuillez réessayer.",
+    "INVALID_OTP": "Code de sécurité invalide.",
+    "EXPIRED_OTP": "Ce code a expiré. Veuillez en demander un nouveau.",
+    "MISSING_CREDENTIALS": "Email ou code de sécurité manquant."
   },
   "USER": {
     "NOT_FOUND": "Utilisateur introuvable.",
     "EMAIL_EXISTS": "Cet email est déjà associé à un compte.",
-    "CERTIFIED_NAME_WARNING": "Ce nom est déjà utilisé et exploité comme image de marque par une personnalité publique. Voulez-vous toujours valider votre choix ?",
+    "CERTIFIED_NAME_WARNING": "Le nom que vous avez choisi est déjà utilisé et exploité comme image de marque par une personnalité publique.",
+    "CERTIFIED_NAME_VALIDATE_QUESTION": "Souhaitez-vous toujours valider votre choix ?",
     "SLSH_ID_GENERATION_FAILED": "Un problème est survenu lors de la génération de votre SLSH ID. Veuillez réessayer.",
     "ACCOUNT_BANNED": "Votre compte a été banni.",
     "ACCOUNT_SUSPENDED": "Votre compte est temporairement suspendu."
   },
   "VALIDATION": {
     "EMAIL_INVALID": "Le format de l'email est invalide.",
-    "USERNAME_TOO_SHORT": "Le pseudo doit contenir au moins 2 caractères.",
-    "USERNAME_TOO_LONG": "Le pseudo ne peut pas dépasser 14 caractères.",
-    "USERNAME_LETTERS_ONLY": "Le pseudo ne peut contenir que des lettres (sans chiffres, espaces ou caractères spéciaux).",
+    "USERNAME_TOO_SHORT": "Le nom doit contenir au moins 2 caractères.",
+    "USERNAME_TOO_LONG": "Le nom ne peut pas dépasser 14 caractères.",
+    "USERNAME_LETTERS_ONLY": "Le nom ne peut contenir que des lettres (sans chiffres, espaces ou caractères spéciaux).",
     "DIGIT_INVALID": "Vous devez choisir exactement un chiffre (0-9).",
     "LETTER_INVALID": "Vous devez choisir exactement une lettre (A-Z).",
-    "COLOR_INVALID": "Veuillez sélectionner une couleur de Membrane valide.",
+    "COLOR_INVALID": "Veuillez sélectionner une couleur valide.",
     "PHONE_INVALID": "Format de numéro de téléphone invalide. Veuillez utiliser le format international (ex: +33123456789).",
     "URL_INVALID": "Le format de l'URL est invalide.",
     "COUNTRY_CODE_INVALID": "Le code pays doit faire exactement 2 caractères.",
     "DOB_IN_FUTURE": "La date de naissance ne peut pas être dans le futur.",
     "REQUIRED": "Ce champ est requis."
-  }
+  },
+  "Register": {
+    "title": "Création de compte",
+    "subtitle": "Veuillez configurer les paramètres fondamentaux de votre identité numérique Slash.",
+    "steps": {
+      "email": "Contact",
+      "name": "Identité",
+      "foundations": "Fondations",
+      "membraneColor": "Signature Visuelle"
+    },
+    "stepProgress": "Étape {current} sur {total}",
+    "emailLabel": "Adresse Email",
+    "emailPlaceholder": "votre@email.com",
+    "nameLabel": "Votre Nom",
+    "namePlaceholder": "Entrez votre nom",
+    "nameHelp": "Uniquement des lettres. 14 caractères maximum. Sans chiffres ni symboles.",
+    "digitLabel": "Chiffre",
+    "digitPlaceholder": "0-9",
+    "letterLabel": "Lettre",
+    "letterPlaceholder": "A-Z",
+    "irreversibleWarning": "Attention : Le choix de votre Chiffre et Lettre est strictement irréversible.",
+    "colorLabel": "Signature visuelle",
+    "colorSubtitle": "Sélectionnez l'Aura de votre identité",
+    "colors": {
+      "singularity": "Singularité",
+      "plasma": "Plasma",
+      "boreal": "Boréal",
+      "fusion": "Fusion"
+    },
+    "actions": {
+      "next": "Continuer",
+      "back": "Retour",
+      "submit": "Créer mon compte",
+      "submitting": "Création...",
+      "modify_name": "Modifier votre nom",
+      "validate_name": "Valider"
+    },
+    "alreadyHaveAccountPt1": "Compte déjà existant ? ",
+    "alreadyHaveAccountPt2": "Connectez-vous"
+  },
+  "Otp": {
+    "title": "Autorisation Requise",
+    "description": "Un code de sécurité a été envoyé à l'adresse",
+    "validation": {
+      "length": "Le code doit contenir exactement 6 chiffres."
+    },
+    "success": "Authentification réussie.",
+    "submit": "Authentifier",
+    "submitting": "Vérification...",
+    "resend": "Renvoyer le code",
+    "resending": "Envoi en cours...",
+    "resendSuccess": "Un nouveau code a été envoyé.",
+    "resendError": "Impossible de renvoyer le code. Veuillez réessayer."
+  },
+  "Login": {
+    "title": "Accès au compte Slash",
+    "description": {
+      "part1": "Veuillez saisir l'email associé à votre Compte.",
+      "part2": "Un code de sécurité temporaire vous sera transmis."
+    },
+    "emailLabel": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "submit": "Se connecter",
+    "submitting": "Connexion...",
+    "success": "Code de sécurité envoyé.",
+    "noAccount": "Pas encore de compte ?",
+    "registerLink": "Inscrivez-vous"
+  },
+  "CredentialsSignin": "Code de sécurité invalide ou expiré."
 }

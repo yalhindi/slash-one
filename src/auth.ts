@@ -4,12 +4,17 @@ import Nodemailer from "next-auth/providers/nodemailer"
 import { prisma } from "@/lib/prisma"
 import { randomInt } from "crypto"
 import {UserService} from "@/features/users/user.service";
-import { createTransport } from "nodemailer";
 import {OtpService} from "@/features/auth/otp.service";
+import { createTransport } from "nodemailer";
+import Credentials from "next-auth/providers/credentials"
+import {InternalServerError} from "@/core/errors/InternalServerError";
+import {CustomAuthError} from "@/core/errors/CustomAuthError";
+
+import { authConfig } from "./auth.config"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+    ...authConfig, // (ça importe la stratégie JWT et les pages)
     adapter: PrismaAdapter(prisma),
-    session: { strategy: "jwt" },
     providers: [
         Nodemailer({
             server: {
@@ -45,21 +50,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 const result = await transport.sendMail({
                     to: identifier,
                     from: provider.from,
-                    subject: `Votre code d'accès Slash : ${token}`,
-                    text: `Votre code d'accès est : ${token}`, // Version texte brut (fallback)
+                    subject: `Slash Code : ${token}`,
+                    text: `Your access code is : ${token}. Valid 10 minutes.`,
                     html: `
                         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; border-radius: 10px;">
-                          <h1 style="color: #111827; text-align: center;">Initialisation de la Membrane</h1>
+                          <h1 style="color: #111827; text-align: center;">Verification code</h1>
                           <p style="color: #4b5563; font-size: 16px; text-align: center;">
-                            Bienvenue sur le MegaHub. Voici votre code de sécurité unique pour autoriser l'accès :
+                            Use the following code to secure your login : 
                           </p>
-                          <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; border: 1px solid #e5e7eb;">
+                         <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin: 30px 0 10px 0; text-align: center; border: 1px solid #e5e7eb;">
                             <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #4f46e5;">
                               ${token}
                             </span>
                           </div>
+                          <p style="color: #d97706; font-size: 14px; font-weight: bold; text-align: center; margin-top: 0; margin-bottom: 30px;">
+                            Valid for 10 minutes
+                          </p>
                           <p style="color: #6b7280; font-size: 14px; text-align: center;">
-                            Si vous n'avez pas demandé ce code, vous pouvez ignorer cet email en toute sécurité.
+                            If you didn't request this code, you can safely ignore this email.
                           </p>
                         </div>
                       `,
@@ -67,10 +75,56 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 const failed = result.rejected.concat(result.pending).filter(Boolean)
                 if (failed.length) {
-                    throw new Error(`Impossible d'envoyer l'email à (${failed.join(", ")})`)
+                    throw new InternalServerError("AUTH.SEND_FAILED")
                 }
             },
         }),
+
+        // Le provider pour la VÉRIFICATION manuelle
+        Credentials({
+            id: "credentials",
+            name: "OTP",
+            credentials: {
+                email: { label: "Email", type: "email" },
+                code: { label: "Code", type: "text" }
+            },
+            async authorize(credentials) {
+                const email = credentials?.email as string;
+                const code = credentials?.code as string;
+
+                // Vérification locale
+                if (!email || !code) {
+                    throw new CustomAuthError("AUTH.MISSING_CREDENTIALS");
+                }
+
+                // Appel au Service Externe :
+                // OtpService jette des UnauthorizedError qu'il faut traduire pour NextAuth.
+                try {
+                    await OtpService.consumeOtp(email, code);
+                } catch (error) {
+                    if (error instanceof Error) {
+                        // On passe notre message d'erreur (ex: "AUTH.INVALID_OTP") à NextAuth
+                        throw new CustomAuthError(error.message);
+                    }
+                    // Fallback de sécurité si l'erreur n'est pas une instance de Error
+                    throw new CustomAuthError("API.INTERNAL_SERVER_ERROR");
+                }
+
+                const user = await UserService.getUserByEmail(email);
+
+                // On vérifie avant de l'envoyer
+                if (!user) {
+                    throw new CustomAuthError("USER.NOT_FOUND");
+                }
+
+                // On met à jour la base si c'est nécessaire (la toute première fois).
+                if (!user.emailVerified) {
+                    await UserService.markEmailAsVerified(email);
+                }
+
+                return user;
+            }
+        })
     ],
     callbacks: {
         // Cette fonction est le "Videur" : elle s'exécute quand quelqu'un essaie de se connecter

@@ -3,6 +3,7 @@ import { CreateUserInput, UpdateUserInput } from './user.schema'
 import { Prisma, Role } from '@prisma/client'
 import { ConflictError } from '@/core/errors/ConflictError'
 import { NotFoundError } from '@/core/errors/NotFoundError'
+import {ForbiddenError} from "@/core/errors/ForbiddenError";
 import crypto from 'crypto'
 
 export class UserService {
@@ -100,8 +101,20 @@ export class UserService {
         return user
     }
 
+    static async getUserByEmail(email: string) {
+        const user = await UserRepository.findByEmail(email)
+        if (!user) {
+            throw new NotFoundError("USER.NOT_FOUND")
+        }
+        return user
+    }
+
     static async getUsersByRole(role: Role) {
-        return await UserRepository.findByRole(role)
+        const user = await UserRepository.findByRole(role)
+        if (!user) {
+            throw new NotFoundError("USER.NOT_FOUND")
+        }
+        return user
     }
 
     // ==========================================
@@ -123,6 +136,12 @@ export class UserService {
         }
 
         return await UserRepository.updateById(id, prismaData)
+    }
+
+    // Marquer un email comme "vérifié" en mettant à jour sa date de vérification
+    static async markEmailAsVerified(email: string) {
+        const verificationDate = new Date();
+        await UserRepository.updateEmailVerificationDate(email, verificationDate);
     }
 
     // ==========================================
@@ -151,15 +170,15 @@ export class UserService {
         const status = await UserRepository.getAccountStatus(email)
 
         if (!status) {
-            throw new Error("USER.NOT_FOUND")
+            throw new NotFoundError("USER.NOT_FOUND")
         }
 
         if (status === 'BANNED') {
-            throw new Error("USER.ACCOUNT_BANNED")
+            throw new ForbiddenError("USER.ACCOUNT_BANNED")
         }
 
         if (status === 'SUSPENDED') {
-            throw new Error("USER.ACCOUNT_SUSPENDED")
+            throw new ForbiddenError("USER.ACCOUNT_SUSPENDED")
         }
 
         // Si on arrive ici, le statut est 'ACTIVE'

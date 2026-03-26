@@ -1,12 +1,19 @@
 {
   "API": {
     "INTERNAL_SERVER_ERROR": "An unexpected Slash server error occurred. Please try again later.",
-    "VALIDATION_FAILED": "Some information in your Membrane is invalid. Please check the form."
+    "VALIDATION_FAILED": "Some information is invalid. Please check the form."
+  },
+  "AUTH": {
+    "SEND_FAILED": "Failed to send the security code. Please try again.",
+    "INVALID_OTP": "Invalid security code.",
+    "EXPIRED_OTP": "This code has expired. Please request a new one.",
+    "MISSING_CREDENTIALS": "Email or security code is missing."
   },
   "USER": {
     "NOT_FOUND": "User not found.",
     "EMAIL_EXISTS": "This email is already linked to an account.",
-    "CERTIFIED_NAME_WARNING": "This name is already used and operated as a brand by a public figure. Do you still want to validate your choice?",
+    "CERTIFIED_NAME_WARNING": "The name you have chosen is already used and operated as a brand by a public figure.",
+    "CERTIFIED_NAME_VALIDATE_QUESTION": "Do you still wish to validate your choice?",
     "SLSH_ID_GENERATION_FAILED": "An error occurred while generating your SLSH ID. Please try again.",
     "ACCOUNT_BANNED": "Your account has been banned.",
     "ACCOUNT_SUSPENDED": "Your account has been temporarily suspended."
@@ -18,11 +25,79 @@
     "USERNAME_LETTERS_ONLY": "Username can only contain letters (no numbers, spaces, or special characters).",
     "DIGIT_INVALID": "You must choose exactly one digit (0-9).",
     "LETTER_INVALID": "You must choose exactly one letter (A-Z).",
-    "COLOR_INVALID": "Please select a valid Membrane color.",
+    "COLOR_INVALID": "Please select a valid color.",
     "PHONE_INVALID": "Invalid phone number format. Please use international format (e.g., +33123456789).",
     "URL_INVALID": "Invalid URL format.",
     "COUNTRY_CODE_INVALID": "Country code must be exactly 2 characters long.",
     "DOB_IN_FUTURE": "Date of birth cannot be in the future.",
     "REQUIRED": "This field is required."
-  }
+  },
+  "Register": {
+    "title": "Account Creation",
+    "subtitle": "Please configure the fundamental parameters of your digital Slash identity.",
+    "steps": {
+      "email": "Contact",
+      "name": "Identity",
+      "foundations": "Foundations",
+      "membraneColor": "Visual Signature"
+    },
+    "stepProgress": "Step {current} of {total}",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "your@email.com",
+    "nameLabel": "Your Name",
+    "namePlaceholder": "Enter your name",
+    "nameHelp": "Letters only. Maximum 14 characters. No numbers or symbols.",
+    "digitLabel": "Digit",
+    "digitPlaceholder": "0-9",
+    "letterLabel": "Letter",
+    "letterPlaceholder": "A-Z",
+    "irreversibleWarning": "Warning: The choice of your Digit and Letter is strictly irreversible.",
+    "colorLabel": "Visual Signature",
+    "colorSubtitle": "Select the Aura of your identity",
+    "colors": {
+      "singularity": "Singularity",
+      "plasma": "Plasma",
+      "boreal": "Boreal",
+      "fusion": "Fusion"
+    },
+    "actions": {
+      "next": "Continue",
+      "back": "Back",
+      "submit": "Create my account",
+      "submitting": "Creation...",
+      "modify_name": "Modify your name",
+      "validate_name": "Confirm"
+    },
+    "alreadyHaveAccountPt1": "Already have an account? ",
+    "alreadyHaveAccountPt2": "Sign in"
+  },
+  "Otp": {
+    "title": "Authorization Required",
+    "description": "A security code has been sent to the address",
+    "validation": {
+      "length": "The code must contain exactly 6 digits."
+    },
+    "success": "Authentication successful.",
+    "submit": "Authenticate",
+    "submitting": "verifying...",
+    "resend": "Resend code",
+    "resending": "Resending...",
+    "resendSuccess": "A new code has been sent.",
+    "resendError": "Unable to resend the code. Please try again."
+  },
+  "Login": {
+    "title": "Slash Account Access",
+    "description": {
+      "part1": "Please enter the email associated with your Account.",
+      "part2": "A temporary security code will be sent to you."
+    },
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "submit": "Login",
+    "submitting": "Logging in...",
+    "success": "Security code sent.",
+    "noAccount": "Don't have an account yet?",
+    "registerLink": "Sign up"
+  },
+  "CredentialsSignin": "Invalid or expired security code."
 }
