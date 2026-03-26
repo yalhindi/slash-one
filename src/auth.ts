@@ -10,9 +10,11 @@ import Credentials from "next-auth/providers/credentials"
 import {InternalServerError} from "@/core/errors/InternalServerError";
 import {CustomAuthError} from "@/core/errors/CustomAuthError";
 
+import { authConfig } from "./auth.config"
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
+    ...authConfig, // (ça importe la stratégie JWT et les pages)
     adapter: PrismaAdapter(prisma),
-    session: { strategy: "jwt" },
     providers: [
         Nodemailer({
             server: {
