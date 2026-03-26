@@ -1,3 +1,5 @@
+import {LoginForm} from "@/features/auth/components/LoginForm";
+
 export default function LoginPage() {
-    return <div>Page de login en construction...</div>;
+    return <LoginForm />;
 }

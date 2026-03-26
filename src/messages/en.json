@@ -85,5 +85,19 @@
     "resendSuccess": "A new code has been sent.",
     "resendError": "Unable to resend the code. Please try again."
   },
+  "Login": {
+    "title": "Slash Account Access",
+    "description": {
+      "part1": "Please enter the email associated with your Account.",
+      "part2": "A temporary security code will be sent to you."
+    },
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "submit": "Login",
+    "submitting": "Logging in...",
+    "success": "Security code sent.",
+    "noAccount": "Don't have an account yet?",
+    "registerLink": "Sign up"
+  },
   "CredentialsSignin": "Invalid or expired security code."
 }

@@ -85,5 +85,19 @@
     "resendSuccess": "Un nouveau code a été envoyé.",
     "resendError": "Impossible de renvoyer le code. Veuillez réessayer."
   },
+  "Login": {
+    "title": "Accès au compte Slash",
+    "description": {
+      "part1": "Veuillez saisir l'email associé à votre Compte.",
+      "part2": "Un code de sécurité temporaire vous sera transmis."
+    },
+    "emailLabel": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "submit": "Se connecter",
+    "submitting": "Connexion...",
+    "success": "Code de sécurité envoyé.",
+    "noAccount": "Pas encore de compte ?",
+    "registerLink": "Inscrivez-vous"
+  },
   "CredentialsSignin": "Code de sécurité invalide ou expiré."
 }
