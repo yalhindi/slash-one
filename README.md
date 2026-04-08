@@ -2,12 +2,33 @@
 
 Bienvenue sur le dépôt du projet ONE, l'écosystème centralisé permettant de récolter et lier les progressions des joueurs sur différents serveurs de jeux (Minecraft, etc.).
 
+## Conception & Architecture
+
+Vous trouverez l'ensemble des ressources liées à l'architecture dans le dossier dédié :  
+**[Consulter le dossier de conception](./docs/conception)**
+
+Ce dossier est organisé autour des axes suivants :
+
+### Modélisation des Données & Structure
+* **MCD & MLD :** Modèles Conceptuel et Logique de Données représentant la structure de notre base.
+* **Diagramme de Classes UML :** Représentation orientée objet de nos entités et de leurs relations.
+
+### Architecture & Flux de Sécurité
+* **Schéma d'Architecture Logiciel :** Vue globale des composants du système.
+* **Diagrammes de Séquence :** * Flux d'authentification par OTP (Passwordless).
+    * Flux d'authentification avancé (OTP + Passkey).
+
+### Expérience Utilisateur
+* **UCD (Use Case Diagrams) :** Les cas d'utilisation recensant les interactions possibles des acteurs avec le système.
+* **Parcours Utilisateur (User Journey) :** Le parcours pas-à-pas de l'utilisateur lors de l'authentification OTP et Passkey.
+
+
 ## Stack Technique
 - Framework : Next.js 15+ (App Router, React Compiler activé)
 - Langage : TypeScript
 - Style : Tailwind CSS v4
 - ORM : Prisma v7.4+ (avec adaptateur natif pg)
-- Base de données : PostgreSQL (via Docker)
+- Base de données : PostgresSQL (via Docker)
 - Authentification : Auth.js v5 (NextAuth) - Approche Passwordless (OTP / Mailtrap)
 - Validation des données : Zod
 - Architecture : N-Tiers orientée Feature (Vertical Slicing)
