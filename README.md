@@ -22,6 +22,7 @@ Ce dossier est organisé autour des axes suivants :
 * **UCD (Use Case Diagrams) :** Les cas d'utilisation recensant les interactions possibles des acteurs avec le système.
 * **Parcours Utilisateur (User Journey) :** Le parcours pas-à-pas de l'utilisateur lors de l'authentification OTP et Passkey.
 
+---
 
 ## Stack Technique
 - Framework : Next.js 15+ (App Router, React Compiler activé)
@@ -99,7 +100,6 @@ npm run dev
 ```
 L'application est maintenant accessible sur http://localhost:3000.
 
----
 
 ### 7. Lancer les tests unitaires
 Le projet utilise Vitest pour garantir la fiabilité de la logique métier. Les tests ciblent spécifiquement la couche Service en isolant complètement la base de données (via des mocks), respectant ainsi la séparation des préoccupations. 
@@ -116,6 +116,8 @@ Pour ouvrir le tableau de bord interactif de Vitest dans votre navigateur :
 npm run test:ui
 ```
 
+---
+
 ## Architecture du projet
 Le code métier est séparé des routes Next.js pour respecter une architecture N-Tiers (Controllers → Services → Repositories) :
 - `src/app/` : Routage Next.js (Front-end UI, API Controllers et routes Catch-All d'authentification).
@@ -123,3 +125,5 @@ Le code métier est séparé des routes Next.js pour respecter une architecture 
 - `src/core/` : Logique transverse (Sécurité, Middlewares globaux).
 - `src/lib/` : Configuration technique et clients externes (ex: `prisma.ts`).
 - `src/auth.ts` : Configuration centrale du moteur de sécurité (NextAuth / Auth.js) et de l'authentification Passwordless.
+
+---
